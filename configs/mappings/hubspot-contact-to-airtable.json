@@ -1,0 +1,32 @@
+{
+  "destination_operations": [
+    {
+      "fields": {
+        "Company": "{company}",
+        "Email": "{email}",
+        "Name": "{first_name} {last_name}",
+        "Source": "hubspot-like-webhook"
+      },
+      "operation": "upsert",
+      "record_id": "contact:{contact_id}",
+      "system": "airtable"
+    }
+  ],
+  "handoff_note_template": "Mapped contact.created into one Airtable-style upsert using synthetic data.",
+  "idempotency_fields": [
+    "contact_id"
+  ],
+  "name": "hubspot-contact-to-airtable",
+  "optional_fields": [
+    "company"
+  ],
+  "required_fields": [
+    "contact_id",
+    "email",
+    "first_name",
+    "last_name"
+  ],
+  "source": "hubspot-like",
+  "source_event_type": "contact.created",
+  "validation_summary": "HubSpot-like contact fields mapped to one Airtable-style upsert."
+}

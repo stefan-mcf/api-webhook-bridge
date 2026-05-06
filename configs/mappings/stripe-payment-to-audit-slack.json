@@ -1,0 +1,43 @@
+{
+  "destination_operations": [
+    {
+      "fields": {
+        "Amount": "{currency} {amount}",
+        "Customer Email": "{customer_email}",
+        "Event ID": "{event_id}",
+        "Invoice ID": "{invoice_id}",
+        "Payment Intent": "{payment_intent}",
+        "Source": "stripe-like-webhook"
+      },
+      "operation": "record_payment",
+      "record_id": "payment:{payment_intent}",
+      "system": "payment_audit"
+    },
+    {
+      "channel": "#ops-payments",
+      "operation": "send_alert",
+      "severity": "info",
+      "system": "slack",
+      "text": "Synthetic Stripe payment succeeded {payment_intent} for {customer_email}: {currency} {amount}"
+    }
+  ],
+  "handoff_note_template": "Mapped payment.succeeded into audit record and Slack-style notification with idempotency proof.",
+  "idempotency_fields": [
+    "event_id",
+    "payment_intent"
+  ],
+  "name": "stripe-payment-to-audit-slack",
+  "optional_fields": [
+    "invoice_id"
+  ],
+  "required_fields": [
+    "event_id",
+    "payment_intent",
+    "customer_email",
+    "amount",
+    "currency"
+  ],
+  "source": "stripe-like",
+  "source_event_type": "payment.succeeded",
+  "validation_summary": "Stripe-like payment fields mapped to payment audit record plus Slack notification."
+}

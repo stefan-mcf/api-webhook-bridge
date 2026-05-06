@@ -1,0 +1,79 @@
+{
+    "status": "mapped",
+    "source_event_type": "order.created",
+    "mapping_name": "shopify-order-to-slack-crm",
+    "mapped_fields": {},
+    "destination_operations": [
+        {
+            "channel": "#ops-orders",
+            "operation": "send_alert",
+            "severity": "info",
+            "system": "slack",
+            "text": "New synthetic Shopify order O-200 for buyer@example.com: USD 149.00",
+            "mock_client_record": {
+                "channel": "#ops-orders",
+                "text": "New synthetic Shopify order O-200 for buyer@example.com: USD 149.00",
+                "severity": "info"
+            }
+        },
+        {
+            "fields": {
+                "Email": "buyer@example.com",
+                "Name": "Sam Rivera",
+                "Order ID": "O-200",
+                "Order Total": "USD 149.00",
+                "Source": "shopify-like-webhook"
+            },
+            "operation": "append_note",
+            "record_id": "customer:buyer@example.com",
+            "system": "crm",
+            "mock_client_record": {
+                "email": "buyer@example.com",
+                "Email": "buyer@example.com",
+                "Name": "Sam Rivera",
+                "Order ID": "O-200",
+                "Order Total": "USD 149.00",
+                "Source": "shopify-like-webhook",
+                "id": "c8d3adca"
+            }
+        }
+    ],
+    "validation_errors": [],
+    "validation_summary": {
+        "status": "passed",
+        "message": "Shopify-like order fields mapped to Slack ops alert plus CRM note.",
+        "required_fields_checked": [
+            "order_id",
+            "email",
+            "total_price",
+            "currency",
+            "customer.first_name",
+            "customer.last_name"
+        ]
+    },
+    "retry_policy": "idempotent_by_source_event_key",
+    "retry_recommendation": "safe to replay; duplicate deliveries are detected by idempotency_key",
+    "safe_to_retry": true,
+    "manual_review_reason": "",
+    "idempotency_key": "order.created:O-200",
+    "duplicate": false,
+    "audit_id": "audit:order.created:mapped:order.created:O-200",
+    "correlation_id": "corr:order.created:order.created:O-200",
+    "audit_log": [
+        {
+            "audit_id": "audit:order.created:mapped:order.created:O-200",
+            "correlation_id": "corr:order.created:order.created:O-200",
+            "timestamp": "2026-05-06T00:00:00Z",
+            "source": "shopify-like",
+            "event_type": "order.created",
+            "mapping_name": "shopify-order-to-slack-crm",
+            "status": "mapped",
+            "destination_operation_count": 2,
+            "fixture_safe": true,
+            "live_services_used": false
+        }
+    ],
+    "handoff_note": "Mapped order.created into Slack-style ops alert plus CRM note using synthetic data.",
+    "fixture_safe": true,
+    "live_services_used": false
+}

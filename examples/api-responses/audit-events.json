@@ -1,0 +1,58 @@
+{
+    "events": [
+        {
+            "audit_id": "audit:contact.created:mapped:contact.created:C-100",
+            "correlation_id": "corr:contact.created:contact.created:C-100",
+            "destination_operation_count": 1,
+            "event_type": "contact.created",
+            "fixture_safe": true,
+            "live_services_used": false,
+            "mapping_name": "hubspot-contact-to-airtable",
+            "recorded_at": "2026-05-06T14:30:57.330767+00:00",
+            "source": "hubspot-like",
+            "status": "mapped",
+            "timestamp": "2026-05-06T00:00:00Z"
+        },
+        {
+            "audit_id": "audit:order.created:mapped:order.created:O-200",
+            "correlation_id": "corr:order.created:order.created:O-200",
+            "destination_operation_count": 2,
+            "event_type": "order.created",
+            "fixture_safe": true,
+            "live_services_used": false,
+            "mapping_name": "shopify-order-to-slack-crm",
+            "recorded_at": "2026-05-06T14:30:57.361467+00:00",
+            "source": "shopify-like",
+            "status": "mapped",
+            "timestamp": "2026-05-06T00:00:00Z"
+        },
+        {
+            "audit_id": "audit:payment.succeeded:mapped:payment.succeeded:evt_300:pi_300",
+            "correlation_id": "corr:payment.succeeded:payment.succeeded:evt_300:pi_300",
+            "destination_operation_count": 2,
+            "event_type": "payment.succeeded",
+            "fixture_safe": true,
+            "live_services_used": false,
+            "mapping_name": "stripe-payment-to-audit-slack",
+            "recorded_at": "2026-05-06T14:30:57.391055+00:00",
+            "source": "stripe-like",
+            "status": "mapped",
+            "timestamp": "2026-05-06T00:00:00Z"
+        },
+        {
+            "audit_id": "audit:payment.succeeded:duplicate_ignored:payment.succeeded:evt_300:pi_300",
+            "correlation_id": "corr:payment.succeeded:payment.succeeded:evt_300:pi_300",
+            "destination_operation_count": 0,
+            "event_type": "payment.succeeded",
+            "fixture_safe": true,
+            "live_services_used": false,
+            "mapping_name": "stripe-payment-to-audit-slack",
+            "recorded_at": "2026-05-06T14:30:57.421754+00:00",
+            "source": "stripe-like",
+            "status": "duplicate_ignored",
+            "timestamp": "2026-05-06T00:00:00Z"
+        }
+    ],
+    "fixture_safe": true,
+    "live_services_used": false
+}

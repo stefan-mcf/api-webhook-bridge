@@ -1,0 +1,77 @@
+{
+    "status": "duplicate_ignored",
+    "source_event_type": "payment.succeeded",
+    "mapping_name": "stripe-payment-to-audit-slack",
+    "mapped_fields": {
+        "Amount": "USD 149.00",
+        "Customer Email": "payer@example.com",
+        "Event ID": "evt_300",
+        "Invoice ID": "in_300",
+        "Payment Intent": "pi_300",
+        "Source": "stripe-like-webhook"
+    },
+    "destination_operations": [
+        {
+            "fields": {
+                "Amount": "USD 149.00",
+                "Customer Email": "payer@example.com",
+                "Event ID": "evt_300",
+                "Invoice ID": "in_300",
+                "Payment Intent": "pi_300",
+                "Source": "stripe-like-webhook"
+            },
+            "operation": "record_payment",
+            "record_id": "payment:pi_300",
+            "system": "payment_audit"
+        },
+        {
+            "channel": "#ops-payments",
+            "operation": "send_alert",
+            "severity": "info",
+            "system": "slack",
+            "text": "Synthetic Stripe payment succeeded pi_300 for payer@example.com: USD 149.00",
+            "mock_client_record": {
+                "channel": "#ops-payments",
+                "text": "Synthetic Stripe payment succeeded pi_300 for payer@example.com: USD 149.00",
+                "severity": "info"
+            }
+        }
+    ],
+    "validation_errors": [],
+    "validation_summary": {
+        "status": "passed",
+        "message": "Stripe-like payment fields mapped to payment audit record plus Slack notification.",
+        "required_fields_checked": [
+            "event_id",
+            "payment_intent",
+            "customer_email",
+            "amount",
+            "currency"
+        ]
+    },
+    "retry_policy": "idempotent_by_source_event_key",
+    "retry_recommendation": "duplicate delivery recognized; no destination operation repeated",
+    "safe_to_retry": true,
+    "manual_review_reason": "",
+    "idempotency_key": "payment.succeeded:evt_300:pi_300",
+    "duplicate": true,
+    "audit_id": "audit:payment.succeeded:duplicate_ignored:payment.succeeded:evt_300:pi_300",
+    "correlation_id": "corr:payment.succeeded:payment.succeeded:evt_300:pi_300",
+    "audit_log": [
+        {
+            "audit_id": "audit:payment.succeeded:duplicate_ignored:payment.succeeded:evt_300:pi_300",
+            "correlation_id": "corr:payment.succeeded:payment.succeeded:evt_300:pi_300",
+            "timestamp": "2026-05-06T00:00:00Z",
+            "source": "stripe-like",
+            "event_type": "payment.succeeded",
+            "mapping_name": "stripe-payment-to-audit-slack",
+            "status": "duplicate_ignored",
+            "destination_operation_count": 0,
+            "fixture_safe": true,
+            "live_services_used": false
+        }
+    ],
+    "handoff_note": "Mapped payment.succeeded into audit record and Slack-style notification with idempotency proof.",
+    "fixture_safe": true,
+    "live_services_used": false
+}

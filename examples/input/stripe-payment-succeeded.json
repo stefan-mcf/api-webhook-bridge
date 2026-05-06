@@ -1,0 +1,9 @@
+{
+  "amount": "149.00",
+  "currency": "USD",
+  "customer_email": "payer@example.com",
+  "event_id": "evt_300",
+  "invoice_id": "in_300",
+  "payment_intent": "pi_300",
+  "type": "payment.succeeded"
+}

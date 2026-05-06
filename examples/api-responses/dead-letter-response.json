@@ -1,0 +1,51 @@
+{
+    "status": "validation_failed",
+    "source_event_type": "contact.created",
+    "mapping_name": "hubspot-contact-to-airtable",
+    "mapped_fields": {},
+    "destination_operations": [],
+    "validation_errors": [
+        "missing_required_field: contact_id",
+        "missing_required_field: email"
+    ],
+    "validation_summary": {
+        "status": "failed",
+        "errors": [
+            "missing_required_field: contact_id",
+            "missing_required_field: email"
+        ]
+    },
+    "retry_policy": "fix_payload_then_retry",
+    "retry_recommendation": "fix missing fields and replay the event",
+    "safe_to_retry": true,
+    "manual_review_reason": "required fields missing",
+    "idempotency_key": "contact.created",
+    "duplicate": false,
+    "audit_id": "audit:contact.created:validation_failed:contact.created",
+    "correlation_id": "corr:contact.created:contact.created",
+    "audit_log": [
+        {
+            "audit_id": "audit:contact.created:validation_failed:contact.created",
+            "correlation_id": "corr:contact.created:contact.created",
+            "timestamp": "2026-05-06T00:00:00Z",
+            "source": "unknown",
+            "event_type": "contact.created",
+            "mapping_name": "hubspot-contact-to-airtable",
+            "status": "validation_failed",
+            "destination_operation_count": 0,
+            "fixture_safe": true,
+            "live_services_used": false,
+            "reason": "Required fields are missing; no destination operation was prepared.",
+            "validation_errors": [
+                "missing_required_field: contact_id",
+                "missing_required_field: email"
+            ],
+            "safe_to_retry": true,
+            "retry_recommendation": "fix payload or mapping, then replay synthetic fixture",
+            "manual_review_reason": "Required fields are missing; no destination operation was prepared."
+        }
+    ],
+    "handoff_note": "Required fields are missing; no destination operation was prepared.",
+    "fixture_safe": true,
+    "live_services_used": false
+}

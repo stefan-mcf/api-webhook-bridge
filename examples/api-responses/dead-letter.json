@@ -1,0 +1,27 @@
+{
+    "dead_letter": [
+        {
+            "audit_id": "audit:contact.created:validation_failed:contact.created",
+            "correlation_id": "corr:contact.created:contact.created",
+            "destination_operation_count": 0,
+            "event_type": "contact.created",
+            "fixture_safe": true,
+            "live_services_used": false,
+            "manual_review_reason": "Required fields are missing; no destination operation was prepared.",
+            "mapping_name": "hubspot-contact-to-airtable",
+            "reason": "Required fields are missing; no destination operation was prepared.",
+            "recorded_at": "2026-05-06T14:30:57.452653+00:00",
+            "retry_recommendation": "fix payload or mapping, then replay synthetic fixture",
+            "safe_to_retry": true,
+            "source": "unknown",
+            "status": "validation_failed",
+            "timestamp": "2026-05-06T00:00:00Z",
+            "validation_errors": [
+                "missing_required_field: contact_id",
+                "missing_required_field: email"
+            ]
+        }
+    ],
+    "fixture_safe": true,
+    "live_services_used": false
+}

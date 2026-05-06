@@ -1,0 +1,35 @@
+{
+    "sources": [
+        "hubspot-like",
+        "shopify-like",
+        "stripe-like"
+    ],
+    "destinations": [
+        "airtable-like",
+        "crm-like",
+        "slack-like",
+        "payment-audit-like"
+    ],
+    "automation_kit_backbone": {
+        "backbone": "Automation Kit",
+        "modules": [
+            "auto_kit.pattern_runner",
+            "auto_kit.mock_clients",
+            "auto_kit.workflow_schema"
+        ],
+        "patterns_available": [
+            "calendar-booking",
+            "csv-to-crm",
+            "email-parser",
+            "lead-enrichment",
+            "product-creative-pack",
+            "slack-alerts",
+            "webhook-router"
+        ],
+        "uses_mock_clients": true,
+        "fixture_safe": true,
+        "live_services_used": false
+    },
+    "fixture_safe": true,
+    "live_services_used": false
+}

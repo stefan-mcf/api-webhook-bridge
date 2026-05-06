@@ -1,0 +1,8 @@
+{
+  "company": "Northwind",
+  "contact_id": "C-100",
+  "email": "ALICE@example.com",
+  "first_name": "Alice",
+  "last_name": "Ng",
+  "type": "contact.created"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "api-webhook-bridge",
+  "title": "API Webhook Bridge",
+  "description": "FastAPI webhook bridge template for source-to-destination automation with validation, mapping, mock adapters, and audit logs.",
+  "private": true,
+  "topics": [
+    "fastapi",
+    "api-integration",
+    "webhooks",
+    "automation",
+    "crm",
+    "airtable",
+    "hubspot",
+    "fixture-safe"
+  ],
+  "automation_kit_relationship": "Concrete companion template repo; Automation Kit remains the reusable local automation framework."
+}

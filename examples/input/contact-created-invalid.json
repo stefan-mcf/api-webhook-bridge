@@ -1,0 +1,7 @@
+{
+  "type": "contact.created",
+  "event_id": "evt_contact_invalid_001",
+  "first_name": "Riley",
+  "last_name": "Stone",
+  "company": "Northwind Synthetic"
+}

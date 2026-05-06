@@ -1,0 +1,59 @@
+{
+    "mappings": [
+        {
+            "name": "hubspot-contact-to-airtable",
+            "source": "hubspot-like",
+            "source_event_type": "contact.created",
+            "destination_systems": [
+                "airtable"
+            ],
+            "required_fields": [
+                "contact_id",
+                "email",
+                "first_name",
+                "last_name"
+            ],
+            "fixture_safe": true,
+            "live_services_used": false
+        },
+        {
+            "name": "shopify-order-to-slack-crm",
+            "source": "shopify-like",
+            "source_event_type": "order.created",
+            "destination_systems": [
+                "slack",
+                "crm"
+            ],
+            "required_fields": [
+                "order_id",
+                "email",
+                "total_price",
+                "currency",
+                "customer.first_name",
+                "customer.last_name"
+            ],
+            "fixture_safe": true,
+            "live_services_used": false
+        },
+        {
+            "name": "stripe-payment-to-audit-slack",
+            "source": "stripe-like",
+            "source_event_type": "payment.succeeded",
+            "destination_systems": [
+                "payment_audit",
+                "slack"
+            ],
+            "required_fields": [
+                "event_id",
+                "payment_intent",
+                "customer_email",
+                "amount",
+                "currency"
+            ],
+            "fixture_safe": true,
+            "live_services_used": false
+        }
+    ],
+    "fixture_safe": true,
+    "live_services_used": false
+}

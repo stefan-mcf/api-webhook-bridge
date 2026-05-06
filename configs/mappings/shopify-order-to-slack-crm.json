@@ -1,0 +1,43 @@
+{
+  "destination_operations": [
+    {
+      "channel": "#ops-orders",
+      "operation": "send_alert",
+      "severity": "info",
+      "system": "slack",
+      "text": "New synthetic Shopify order {order_id} for {email}: {currency} {total_price}"
+    },
+    {
+      "fields": {
+        "Email": "{email}",
+        "Name": "{customer.first_name} {customer.last_name}",
+        "Order ID": "{order_id}",
+        "Order Total": "{currency} {total_price}",
+        "Source": "shopify-like-webhook"
+      },
+      "operation": "append_note",
+      "record_id": "customer:{email}",
+      "system": "crm"
+    }
+  ],
+  "handoff_note_template": "Mapped order.created into Slack-style ops alert plus CRM note using synthetic data.",
+  "idempotency_fields": [
+    "order_id"
+  ],
+  "name": "shopify-order-to-slack-crm",
+  "optional_fields": [
+    "line_items_count",
+    "shipping_country"
+  ],
+  "required_fields": [
+    "order_id",
+    "email",
+    "total_price",
+    "currency",
+    "customer.first_name",
+    "customer.last_name"
+  ],
+  "source": "shopify-like",
+  "source_event_type": "order.created",
+  "validation_summary": "Shopify-like order fields mapped to Slack ops alert plus CRM note."
+}

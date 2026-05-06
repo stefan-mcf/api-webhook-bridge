@@ -1,0 +1,68 @@
+{
+    "status": "mapped",
+    "source_event_type": "contact.created",
+    "mapping_name": "hubspot-contact-to-airtable",
+    "mapped_fields": {
+        "Company": "Northwind",
+        "Email": "ALICE@example.com",
+        "Name": "Alice Ng",
+        "Source": "hubspot-like-webhook"
+    },
+    "destination_operations": [
+        {
+            "fields": {
+                "Company": "Northwind",
+                "Email": "ALICE@example.com",
+                "Name": "Alice Ng",
+                "Source": "hubspot-like-webhook"
+            },
+            "operation": "upsert",
+            "record_id": "contact:C-100",
+            "system": "airtable",
+            "mock_client_record": {
+                "email": "alice@example.com",
+                "Company": "Northwind",
+                "Email": "ALICE@example.com",
+                "Name": "Alice Ng",
+                "Source": "hubspot-like-webhook",
+                "id": "c160f8cc"
+            }
+        }
+    ],
+    "validation_errors": [],
+    "validation_summary": {
+        "status": "passed",
+        "message": "HubSpot-like contact fields mapped to one Airtable-style upsert.",
+        "required_fields_checked": [
+            "contact_id",
+            "email",
+            "first_name",
+            "last_name"
+        ]
+    },
+    "retry_policy": "idempotent_by_source_event_key",
+    "retry_recommendation": "safe to replay; duplicate deliveries are detected by idempotency_key",
+    "safe_to_retry": true,
+    "manual_review_reason": "",
+    "idempotency_key": "contact.created:C-100",
+    "duplicate": false,
+    "audit_id": "audit:contact.created:mapped:contact.created:C-100",
+    "correlation_id": "corr:contact.created:contact.created:C-100",
+    "audit_log": [
+        {
+            "audit_id": "audit:contact.created:mapped:contact.created:C-100",
+            "correlation_id": "corr:contact.created:contact.created:C-100",
+            "timestamp": "2026-05-06T00:00:00Z",
+            "source": "hubspot-like",
+            "event_type": "contact.created",
+            "mapping_name": "hubspot-contact-to-airtable",
+            "status": "mapped",
+            "destination_operation_count": 1,
+            "fixture_safe": true,
+            "live_services_used": false
+        }
+    ],
+    "handoff_note": "Mapped contact.created into one Airtable-style upsert using synthetic data.",
+    "fixture_safe": true,
+    "live_services_used": false
+}

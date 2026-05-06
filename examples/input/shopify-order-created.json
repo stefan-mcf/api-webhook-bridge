@@ -1,0 +1,13 @@
+{
+  "currency": "USD",
+  "customer": {
+    "first_name": "Sam",
+    "last_name": "Rivera"
+  },
+  "email": "buyer@example.com",
+  "line_items_count": 3,
+  "order_id": "O-200",
+  "shipping_country": "US",
+  "total_price": "149.00",
+  "type": "order.created"
+}
