@@ -9,15 +9,22 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      AUTOMATION_KIT_PATTERNS: ${{ github.workspace }}/../automation-kit/patterns
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+      - name: Check out Automation Kit backbone
+        uses: actions/checkout@v6
+        with:
+          repository: stefan-mcf/automation-kit
+          path: ../automation-kit
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: '3.11'
       - name: Install Automation Kit backbone
-        run: python -m pip install 'automation-kit @ git+https://github.com/stefan-mcf/automation-kit.git'
+        run: python -m pip install ../automation-kit
       - name: Install package
         run: python -m pip install -e '.[dev]'
       - name: Run tests
