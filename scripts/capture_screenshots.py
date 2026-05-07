@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import subprocess
+import sys
 import textwrap
 from pathlib import Path
 from typing import Any
@@ -91,22 +92,6 @@ def wrap_lines(lines: list[str], width: int) -> list[str]:
     return wrapped
 
 
-def draw_badge(
-    draw: ImageDraw.ImageDraw, xy: tuple[int, int], label: str, color: tuple[int, int, int]
-) -> int:
-    x, y = xy
-    pad_x = 14
-    pad_y = 8
-    bbox = draw.textbbox((0, 0), label, font=SMALL_FONT)
-    width = bbox[2] - bbox[0] + pad_x * 2
-    height = bbox[3] - bbox[1] + pad_y * 2
-    draw.rounded_rectangle(
-        (x, y, x + width, y + height), radius=14, fill=(20, 30, 48), outline=color, width=2
-    )
-    draw.text((x + pad_x, y + pad_y - 1), label, font=SMALL_FONT, fill=color)
-    return x + width + 10
-
-
 def draw_panel(
     draw: ImageDraw.ImageDraw,
     box: tuple[int, int, int, int],
@@ -159,10 +144,6 @@ def render(
     )
     draw.text((58, 48), title, font=TITLE_FONT, fill=TEXT)
     draw.text((60, 90), subtitle, font=SUBTITLE_FONT, fill=MUTED)
-    x = WIDTH - 520
-    for label, color in [("LOCAL", GREEN), ("SYNTHETIC", BLUE)]:
-        x = draw_badge(draw, (x, 56), label, color)
-
     for panel in panels:
         draw_panel(
             draw,
@@ -191,6 +172,7 @@ def render(
 
 
 def main() -> None:
+    py = sys.executable
     contact = load_json("examples/input/contact-created.json")
     payment = load_json("examples/input/stripe-payment-succeeded.json")
 
@@ -225,7 +207,7 @@ def main() -> None:
         ["name", "source", "source_event_type", "destination", "required_fields"],
     )
     pytest_lines = run(
-        ["python", "-m", "pytest", "-q", "tests", "-k", "not screenshots"], max_lines=10
+        [py, "-m", "pytest", "-q", "tests", "-k", "not screenshots"], max_lines=10
     )
 
     render(
