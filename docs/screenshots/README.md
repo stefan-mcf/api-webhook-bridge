@@ -1,6 +1,6 @@
 # Screenshot Evidence
 
-All screenshots are generated from current local FastAPI/API outputs and synthetic fixtures. They contain no secrets, real customer data, account screens, private browser tabs, cloud resources, or live SaaS context.
+All screenshots are generated from current local FastAPI/API outputs and synthetic fixtures. They contain no secrets, real customer data, account screens, private browser tabs, cloud resources, or live external-service context.
 
 | File | Proves |
 |---|---|

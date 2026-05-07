@@ -4,9 +4,9 @@ Use this before making this repo public, creating a clean public export, or shar
 
 ## Public claim
 
-- [ ] The repo claims fixture-safe pre-live integration proof, not live SaaS integration.
+- [ ] The repo claims fixture-safe pre-live integration proof, not live external-service integration.
 - [ ] README and docs do not claim production deployment, hosted availability, real customer data, or completed external delivery.
-- [ ] Live SaaS, cloud resources, releases, public visibility changes, and external sharing remain gated.
+- [ ] Live external-service access, cloud resources, releases, public visibility changes, and external sharing remain gated.
 
 ## Evidence package
 
@@ -63,7 +63,7 @@ Stop before any of these until explicitly approved:
 - existing repo visibility changed to public;
 - clean public export repo created/pushed;
 - release or tag created;
-- live SaaS credentials/accounts connected;
+- live external-service credentials/accounts connected;
 - cloud deployment or public URL created;
 - real client data used;
 - external message or client handoff sent;

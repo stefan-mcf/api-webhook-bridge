@@ -7,7 +7,7 @@
 - Automation Kit owns reusable pattern vocabulary and mock clients.
 - This repo owns API/webhook mappings, FastAPI routes, fixtures, and case-study evidence.
 - All proof examples are fixture-safe and local.
-- The repo can be reviewed without claiming live SaaS connectivity or hosted availability.
+- The repo can be reviewed without claiming live external-service connectivity or hosted availability.
 
 ## Verified flows
 

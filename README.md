@@ -1,6 +1,6 @@
 # API Webhook Bridge
 
-Fixture-safe FastAPI webhook bridge template for validating payloads, mapping fields, handling duplicates, and auditing integration flows before connecting live SaaS credentials.
+Fixture-safe FastAPI webhook bridge template for validating payloads, mapping fields, handling duplicates, and auditing integration flows before connecting live external-service credentials.
 
 It proves a safe first milestone for integration jobs: receive one source event, validate it, map fields into destination-shaped operations, return request/response evidence, write audit/dead-letter proof, and leave handoff notes before any live account is touched.
 
@@ -100,8 +100,8 @@ See `docs/automation-kit-backbone.md` and `docs/automation-kit-case-study-contra
 - Empty credential placeholders only.
 - `fixture_safe: true` and `live_services_used: false` are returned in proof responses.
 - Runtime audit files under `.local/` are ignored.
-- No live SaaS calls, client data, cloud resources, public visibility changes, releases, or external sharing actions are part of the local proof.
-- Public export, existing-repo visibility changes, private collaborator access, live SaaS proof, and cloud deployment remain human-gated.
+- No live external-service calls, client data, cloud resources, public visibility changes, releases, or external sharing actions are part of the local proof.
+- Public export, existing-repo visibility changes, private collaborator access, live external-service proof, and cloud deployment remain human-gated.
 
 ## First milestone shape
 

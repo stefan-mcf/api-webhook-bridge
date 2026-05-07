@@ -9,7 +9,7 @@ This walkthrough shows the fixture-safe API/webhook bridge as a reusable client 
 - Deterministic request/response examples with synthetic data.
 - Idempotency handling for duplicate events.
 - Audit and dead-letter records for reviewable operations.
-- A repeatable first milestone that can be adapted to client-specific SaaS stacks after credential approval.
+- A repeatable first milestone that can be adapted to client-specific external-service stacks after credential approval.
 
 The bridge does not call live HubSpot, Shopify, Stripe, Airtable, Slack, CRM, or cloud APIs. Every fixture is synthetic and local.
 
@@ -94,8 +94,8 @@ The script starts the local API, sends all synthetic fixtures, saves pretty JSON
 ## Safety boundary
 
 - Synthetic fixtures only.
-- No live SaaS calls.
+- No live external-service calls.
 - No credentials or secrets.
 - No real client/customer/account data.
 - No cloud deployment or public URL.
-- Public sharing, clean export, private collaborator access, and live SaaS proof remain separately gated.
+- Public sharing, clean export, private collaborator access, and live external-service proof remain separately gated.

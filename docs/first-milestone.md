@@ -14,4 +14,4 @@ Map one approved source event to the destination schema, run it against syntheti
 
 ## Boundary
 
-No live credentials, live SaaS writes, real customer data, or cloud resources are needed for this first milestone unless separately approved.
+No live credentials, live external-service writes, real customer data, or cloud resources are needed for this first milestone unless separately approved.
