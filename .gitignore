@@ -23,7 +23,8 @@ CONCEPT_SCOPE.md
 docs/plans/
 docs/future-implementation-ideas.md
 docs/*checkpoint*.md
-docs/*proposal*.md
+docs/*client-draft*.md
+docs/*[pP][rR][oO][pP][oO][sS][aA][lL]*.md
 
 # Generated screenshot staging pages; keep final PNG evidence only.
 docs/screenshots/_capture/
