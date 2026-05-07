@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install Automation Kit backbone
+        run: python -m pip install 'automation-kit @ git+https://github.com/stefan-mcf/automation-kit.git'
+      - name: Install package
+        run: python -m pip install -e '.[dev]'
+      - name: Run tests
+        run: python -m pytest -q
+      - name: Run lint
+        run: python -m ruff check .
+      - name: Run mypy
+        run: python -m mypy src
+      - name: Run sandbox walkthrough
+        run: examples/run-sandbox-walkthrough.sh
