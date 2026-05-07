@@ -24,7 +24,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install Automation Kit backbone
-        run: python -m pip install automation-kit
+        run: python -m pip install ./automation-kit
       - name: Install package
         run: python -m pip install -e '.[dev]'
       - name: Run tests
