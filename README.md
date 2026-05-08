@@ -29,6 +29,23 @@ Airtable, Slack, CRM, or a cloud service.
 Below is the local proof-of-concept evidence for the bridge: source events, mapping review,
 idempotency, dead-letter handling, quality gates, and the debugger handoff path.
 
+For Mock Job 01 (`mock-jobs/order-intake-ops-sync`), this repo is the ingress-and-validation proof surface, not the entire buyer story by itself. The Shopify and Stripe responses here prove webhook receipt, field validation, mapping contracts, idempotency, and audit behavior. Downstream Airtable/Sheets-style ops outputs are paired later with `sheets-airtable-sync` so the buyer package can show both safe intake and destination-shaped reporting without overstating what this bridge alone writes.
+
+Core Mock Job 01 artifacts owned here:
+
+- `examples/api-responses/health.json`
+- `examples/api-responses/mappings.json`
+- `examples/api-responses/shopify-order-response.json`
+- `examples/api-responses/stripe-payment-response.json`
+- `examples/api-responses/stripe-payment-duplicate-response.json`
+- `examples/api-responses/dead-letter-response.json`
+- `examples/api-responses/audit-events.json`
+- `examples/api-responses/dead-letter.json`
+- `docs/screenshots/01-flow-overview.png`
+- `docs/screenshots/02-openapi-webhook-endpoints.png`
+- `docs/screenshots/05-idempotency-audit.png`
+- `docs/screenshots/06-dead-letter.png`
+
 [![API Webhook Bridge flow proof](docs/screenshots/01-flow-overview.png)](docs/screenshots/01-flow-overview.png)
 
 [![Local API proof](docs/screenshots/02-openapi-webhook-endpoints.png)](docs/screenshots/02-openapi-webhook-endpoints.png)
@@ -60,13 +77,15 @@ account screens, credentials, browser tabs, private desktop context, or customer
 Use a sibling Automation Kit checkout, then regenerate the API responses locally:
 
 ```bash
-python -m venv .venv
+uv venv --python 3.11 .venv
 source .venv/bin/activate
-pip install -e ../automation-kit
-pip install -e '.[dev]'
+uv pip install -e ../automation-kit
+uv pip install -e '.[dev]'
 export AUTOMATION_KIT_PATH=../automation-kit
 PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" examples/run-sandbox-walkthrough.sh
 ```
+
+If you use the system `python3` on macOS and it resolves to Python 3.10, the sibling `automation-kit` editable install will fail because it requires Python 3.11+. Use the explicit `uv venv --python 3.11 .venv` command above for a reproducible local setup.
 
 Inspect locally:
 

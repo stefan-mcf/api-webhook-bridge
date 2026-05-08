@@ -10,7 +10,7 @@
             "manual_review_reason": "Required fields are missing; no destination operation was prepared.",
             "mapping_name": "hubspot-contact-to-airtable",
             "reason": "Required fields are missing; no destination operation was prepared.",
-            "recorded_at": "2026-05-06T14:30:57.452653+00:00",
+            "recorded_at": "2026-05-08T12:24:31.704802+00:00",
             "retry_recommendation": "fix payload or mapping, then replay synthetic fixture",
             "safe_to_retry": true,
             "source": "unknown",

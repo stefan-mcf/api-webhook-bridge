@@ -8,7 +8,7 @@
             "fixture_safe": true,
             "live_services_used": false,
             "mapping_name": "hubspot-contact-to-airtable",
-            "recorded_at": "2026-05-06T14:30:57.330767+00:00",
+            "recorded_at": "2026-05-08T12:24:31.587652+00:00",
             "source": "hubspot-like",
             "status": "mapped",
             "timestamp": "2026-05-06T00:00:00Z"
@@ -21,7 +21,7 @@
             "fixture_safe": true,
             "live_services_used": false,
             "mapping_name": "shopify-order-to-slack-crm",
-            "recorded_at": "2026-05-06T14:30:57.361467+00:00",
+            "recorded_at": "2026-05-08T12:24:31.617012+00:00",
             "source": "shopify-like",
             "status": "mapped",
             "timestamp": "2026-05-06T00:00:00Z"
@@ -34,7 +34,7 @@
             "fixture_safe": true,
             "live_services_used": false,
             "mapping_name": "stripe-payment-to-audit-slack",
-            "recorded_at": "2026-05-06T14:30:57.391055+00:00",
+            "recorded_at": "2026-05-08T12:24:31.647368+00:00",
             "source": "stripe-like",
             "status": "mapped",
             "timestamp": "2026-05-06T00:00:00Z"
@@ -47,7 +47,7 @@
             "fixture_safe": true,
             "live_services_used": false,
             "mapping_name": "stripe-payment-to-audit-slack",
-            "recorded_at": "2026-05-06T14:30:57.421754+00:00",
+            "recorded_at": "2026-05-08T12:24:31.675255+00:00",
             "source": "stripe-like",
             "status": "duplicate_ignored",
             "timestamp": "2026-05-06T00:00:00Z"

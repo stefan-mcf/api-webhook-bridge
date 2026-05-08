@@ -51,8 +51,9 @@ identifiers, and safety flags.
 | Screenshot | `docs/screenshots/02-openapi-webhook-endpoints.png` |
 
 A Shopify-like `order.created` event is mapped to a Slack-style operations alert and a
-CRM-style note. This demonstrates a common ecommerce handoff pattern without touching live
-accounts.
+CRM-style note. For Mock Job 01, that should be read as ingress-side proof: the bridge proves
+receipt, validation, mapping, and audit behavior before downstream Airtable/Sheets-style
+reporting is demonstrated in `sheets-airtable-sync`.
 
 ## Scenario C — payment succeeded
 
@@ -65,7 +66,9 @@ accounts.
 | Screenshot | `docs/screenshots/05-idempotency-audit.png` |
 
 A Stripe-like `payment.succeeded` event is mapped to payment-audit and Slack-style operations.
-Replaying the same event proves duplicate detection through the idempotency key.
+Replaying the same event proves duplicate detection through the idempotency key. In Mock Job 01,
+this gives the payment-side intake proof that is later paired with downstream ops ledgers and
+exception reporting in `sheets-airtable-sync`.
 
 ## Failure path — dead letter
 

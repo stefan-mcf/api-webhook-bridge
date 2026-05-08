@@ -2,9 +2,13 @@
 
 ## Verified local gates
 
-Run from the repo root with a sibling Automation Kit checkout:
+Run from the repo root with a sibling Automation Kit checkout. On Stefan's macOS setup, prefer a Python 3.11 virtualenv because the default system `python3` may still be 3.10 while `automation-kit` requires 3.11+.
 
 ```bash
+uv venv --python 3.11 .venv
+source .venv/bin/activate
+uv pip install -e ../automation-kit
+uv pip install -e '.[dev]'
 export AUTOMATION_KIT_PATH=../automation-kit
 PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" python -m pytest -q
 PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" python -m ruff check .
@@ -34,6 +38,11 @@ Generated response files include:
 - `examples/api-responses/dead-letter-response.json`
 - `examples/api-responses/audit-events.json`
 - `examples/api-responses/dead-letter.json`
+
+For Mock Job 01, the canonical bridge-side proof bundle is the subset that covers health,
+mappings, Shopify intake, Stripe intake, duplicate handling, and dead-letter behavior. Buyer-facing
+downstream Airtable/Sheets-style output proof is intentionally owned by `sheets-airtable-sync`
+rather than claimed here.
 
 ## Manual API smoke commands
 
