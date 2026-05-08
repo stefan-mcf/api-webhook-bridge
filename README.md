@@ -45,6 +45,7 @@ Core Mock Job 01 artifacts owned here:
 - `docs/screenshots/02-openapi-webhook-endpoints.png`
 - `docs/screenshots/05-idempotency-audit.png`
 - `docs/screenshots/06-dead-letter.png`
+- `docs/screenshots/09-mock-job-01-bridge-proof.png`
 
 [![API Webhook Bridge flow proof](docs/screenshots/01-flow-overview.png)](docs/screenshots/01-flow-overview.png)
 
@@ -61,6 +62,8 @@ Core Mock Job 01 artifacts owned here:
 [![Quality gate proof](docs/screenshots/07-quality-gates.png)](docs/screenshots/07-quality-gates.png)
 
 [![Debugger handoff proof](docs/screenshots/08-debugger-handoff.png)](docs/screenshots/08-debugger-handoff.png)
+
+[![Mock Job 01 Shopify and Stripe intake proof](docs/screenshots/09-mock-job-01-bridge-proof.png)](docs/screenshots/09-mock-job-01-bridge-proof.png)
 
 Supporting written evidence:
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
@@ -16,6 +17,8 @@ app = FastAPI(
     version="0.2.0",
     description="Fixture-safe Automation Kit backed API/webhook bridge proof.",
 )
+
+MAX_WEBHOOK_BODY_BYTES = 64_000
 
 
 @app.get("/health")
@@ -40,7 +43,19 @@ def mappings() -> dict[str, Any]:
 
 
 async def _payload(request: Request) -> dict[str, Any]:
-    body = await request.json()
+    chunks: list[bytes] = []
+    total = 0
+    async for chunk in request.stream():
+        total += len(chunk)
+        if total > MAX_WEBHOOK_BODY_BYTES:
+            raise HTTPException(status_code=413, detail="Webhook payload exceeds 64KB limit")
+        chunks.append(chunk)
+
+    try:
+        body = json.loads(b"".join(chunks))
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail="Webhook payload must be valid JSON") from exc
+
     if not isinstance(body, dict):
         raise HTTPException(status_code=422, detail="Webhook payload must be a JSON object")
     return body

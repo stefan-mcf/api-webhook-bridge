@@ -41,21 +41,22 @@ A HubSpot-like `contact.created` event is mapped into an Airtable-style upsert o
 response includes validation status, mapped fields, destination operation details, audit
 identifiers, and safety flags.
 
-## Scenario B — order created
+## Scenario B — Shopify order + Stripe payment intake for Mock Job 01
 
 | Item | Path |
 |---|---|
-| Source event | `examples/input/shopify-order-created.json` |
-| Mapping config | `configs/mappings/shopify-order-to-slack-crm.json` |
-| API response | `examples/api-responses/shopify-order-response.json` |
-| Screenshot | `docs/screenshots/02-openapi-webhook-endpoints.png` |
+| Shopify source event | `examples/input/shopify-order-created.json` |
+| Shopify mapping config | `configs/mappings/shopify-order-to-slack-crm.json` |
+| Shopify API response | `examples/api-responses/shopify-order-response.json` |
+| Stripe source event | `examples/input/stripe-payment-succeeded.json` |
+| Stripe mapping config | `configs/mappings/stripe-payment-to-audit-slack.json` |
+| Stripe API response | `examples/api-responses/stripe-payment-response.json` |
+| Mock Job 01 screenshot | `docs/screenshots/09-mock-job-01-bridge-proof.png` |
+| Duplicate screenshot | `docs/screenshots/05-idempotency-audit.png` |
 
-A Shopify-like `order.created` event is mapped to a Slack-style operations alert and a
-CRM-style note. For Mock Job 01, that should be read as ingress-side proof: the bridge proves
-receipt, validation, mapping, and audit behavior before downstream Airtable/Sheets-style
-reporting is demonstrated in `sheets-airtable-sync`.
+Shopify-like `order.created` and Stripe-like `payment.succeeded` events provide the primary Mock Job 01 green path. This bridge proves receipt, validation, mapping, idempotency, and audit behavior; downstream Airtable Ops Ledger and spreadsheet-friendly reporting are demonstrated by `sheets-airtable-sync` in the mock-job package.
 
-## Scenario C — payment succeeded
+## Scenario C — payment retry / duplicate delivery
 
 | Item | Path |
 |---|---|
@@ -102,10 +103,13 @@ work.
 ```bash
 export AUTOMATION_KIT_PATH=../automation-kit
 PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" examples/run-sandbox-walkthrough.sh
+PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" python scripts/verify_sandbox_responses.py
 ```
 
 The script starts the local API, sends all synthetic fixtures, saves pretty JSON responses
-under `examples/api-responses/`, and shuts the server down.
+under `examples/api-responses/`, verifies the saved response contract, and shuts the server down.
+If the configured port is already occupied, it exits before deleting/regenerating artifacts so a
+stale server cannot contaminate the proof run.
 
 ## Safety boundary
 

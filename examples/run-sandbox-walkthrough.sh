@@ -13,6 +13,22 @@ OUT_DIR="examples/api-responses"
 PYTHON_BIN="${PYTHON_BIN:-python}"
 mkdir -p "$OUT_DIR"
 
+PORT_BUSY=$(HOST="$HOST" PORT="$PORT" "$PYTHON_BIN" - <<'PY'
+import os
+import socket
+
+host = os.environ["HOST"]
+port = int(os.environ["PORT"])
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+    sock.settimeout(0.2)
+    print("1" if sock.connect_ex((host, port)) == 0 else "0")
+PY
+)
+if [[ "$PORT_BUSY" == "1" ]]; then
+  echo "Port $HOST:$PORT is already in use; set PORT=<free-port> or stop the existing server before running the walkthrough" >&2
+  exit 1
+fi
+
 cleanup() {
   if [[ -n "${SERVER_PID:-}" ]] && kill -0 "$SERVER_PID" >/dev/null 2>&1; then
     kill "$SERVER_PID" >/dev/null 2>&1 || true
@@ -48,5 +64,7 @@ curl -fsS -X POST "$BASE_URL/webhooks/hubspot-like"   -H 'content-type: applicat
 
 curl -fsS "$BASE_URL/audit/events" | $PYTHON_BIN -m json.tool > "$OUT_DIR/audit-events.json"
 curl -fsS "$BASE_URL/audit/dead-letter" | $PYTHON_BIN -m json.tool > "$OUT_DIR/dead-letter.json"
+
+$PYTHON_BIN scripts/verify_sandbox_responses.py
 
 echo "Sandbox walkthrough responses written to $OUT_DIR"

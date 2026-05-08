@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from api_webhook_bridge.api import app
+from api_webhook_bridge.api import MAX_WEBHOOK_BODY_BYTES, app
 from api_webhook_bridge.bridge import reset_default_state
 
 client = TestClient(app)
@@ -81,6 +81,62 @@ def test_webhook_endpoint_rejects_non_object_payload() -> None:
 
     assert response.status_code == 422
     assert "object" in response.json()["detail"].lower()
+
+
+def test_webhook_endpoint_rejects_invalid_json() -> None:
+    response = client.post(
+        "/webhooks/hubspot-like",
+        content=b"{bad json",
+        headers={"content-type": "application/json"},
+    )
+
+    assert response.status_code == 400
+    assert "valid json" in response.json()["detail"].lower()
+
+
+def test_webhook_endpoint_rejects_empty_body() -> None:
+    response = client.post(
+        "/webhooks/hubspot-like",
+        content=b"",
+        headers={"content-type": "application/json"},
+    )
+
+    assert response.status_code == 400
+    assert "valid json" in response.json()["detail"].lower()
+
+
+def test_webhook_endpoint_accepts_body_at_exact_size_limit() -> None:
+    prefix = b'{"type":"deal.deleted","pad":"'
+    suffix = b'"}'
+    payload = prefix + (b"a" * (MAX_WEBHOOK_BODY_BYTES - len(prefix) - len(suffix))) + suffix
+
+    assert len(payload) == MAX_WEBHOOK_BODY_BYTES
+
+    response = client.post(
+        "/webhooks/hubspot-like",
+        content=payload,
+        headers={"content-type": "application/json"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "needs_review"
+
+
+def test_webhook_endpoint_rejects_body_one_byte_over_size_limit() -> None:
+    prefix = b'{"type":"deal.deleted","pad":"'
+    suffix = b'"}'
+    payload = prefix + (b"a" * (MAX_WEBHOOK_BODY_BYTES + 1 - len(prefix) - len(suffix))) + suffix
+
+    assert len(payload) == MAX_WEBHOOK_BODY_BYTES + 1
+
+    response = client.post(
+        "/webhooks/hubspot-like",
+        content=payload,
+        headers={"content-type": "application/json"},
+    )
+
+    assert response.status_code == 413
+    assert "64kb" in response.json()["detail"].lower()
 
 
 def test_unknown_source_returns_404() -> None:

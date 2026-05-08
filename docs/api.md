@@ -17,8 +17,8 @@ OpenAPI JSON is available at `http://127.0.0.1:8011/openapi.json` and docs at `h
 | GET | `/integrations` | Lists source/destination proof scope and Automation Kit backbone contract |
 | GET | `/mappings` | Lists visible mapping configs |
 | POST | `/webhooks/hubspot-like` | Contact to Airtable-style upsert |
-| POST | `/webhooks/shopify-like` | Order to Slack + CRM-style note |
-| POST | `/webhooks/stripe-like` | Payment to audit + Slack-style notification |
+| POST | `/webhooks/shopify-like` | Shopify order intake proof for validation/mapping/audit before downstream ops output |
+| POST | `/webhooks/stripe-like` | Stripe payment intake and duplicate-delivery proof before downstream ops output |
 | GET | `/audit/events` | Local success audit proof |
 | GET | `/audit/dead-letter` | Local dead-letter proof |
 

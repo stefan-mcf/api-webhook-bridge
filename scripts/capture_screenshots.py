@@ -184,6 +184,16 @@ def main() -> None:
         "examples/api-responses/hubspot-contact-response.json",
         ["status", "source_event_type", "mapping_name", "safe_to_retry", "duplicate", "audit_id"],
     )
+    shopify = compact_json_lines(
+        "examples/api-responses/shopify-order-response.json",
+        [
+            "status",
+            "source_event_type",
+            "mapping_name",
+            "destination_operations",
+            "idempotency_key",
+        ],
+    )
     stripe = compact_json_lines(
         "examples/api-responses/stripe-payment-response.json",
         [
@@ -236,7 +246,7 @@ def main() -> None:
                     "schema validation",
                     "mapping JSON review",
                     "idempotency key",
-                    "local mock destination",
+                    "downstream handoff evidence",
                 ],
             },
             {
@@ -434,6 +444,27 @@ def main() -> None:
                     "fix report generated",
                     "human review before live retry",
                 ],
+            },
+        ],
+    )
+    render(
+        OUT / "09-mock-job-01-bridge-proof.png",
+        "Mock Job 01 Bridge Proof",
+        "Shopify order and Stripe payment intake are verified before Airtable/Sheets output proof.",
+        [
+            {
+                "box": (52, 148, 604, 628),
+                "title": "Shopify order intake",
+                "accent": BLUE,
+                "code": True,
+                "lines": shopify,
+            },
+            {
+                "box": (650, 148, 1230, 628),
+                "title": "Stripe payment intake",
+                "accent": GREEN,
+                "code": True,
+                "lines": [*stripe[:7], "duplicate replay covered in 05-idempotency-audit.png"],
             },
         ],
     )

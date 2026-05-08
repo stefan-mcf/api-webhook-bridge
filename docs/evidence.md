@@ -22,9 +22,10 @@ Current implementation has passing pytest, Ruff, and mypy gates after the Automa
 ```bash
 export AUTOMATION_KIT_PATH=../automation-kit
 PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" examples/run-sandbox-walkthrough.sh
+PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" python scripts/verify_sandbox_responses.py
 ```
 
-The walkthrough starts a local FastAPI server, posts the synthetic fixtures, saves pretty JSON responses under `examples/api-responses/`, fetches audit/dead-letter endpoints, and shuts the server down.
+The walkthrough starts a local FastAPI server, posts the synthetic fixtures, saves pretty JSON responses under `examples/api-responses/`, fetches audit/dead-letter endpoints, verifies the saved response contract with `scripts/verify_sandbox_responses.py`, and shuts the server down. It fails before artifact regeneration if the target port is already in use, which prevents stale server state from being mistaken for a clean proof run.
 
 Generated response files include:
 

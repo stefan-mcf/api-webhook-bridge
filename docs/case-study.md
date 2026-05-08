@@ -9,8 +9,10 @@ API/webhook clients need confidence before live credentials are connected: one s
 This repo demonstrates three synthetic flows:
 
 1. HubSpot-like `contact.created` -> Airtable-style upsert.
-2. Shopify-like `order.created` -> Slack-style ops alert plus CRM note.
-3. Stripe-like `payment.succeeded` -> payment audit record plus Slack-style notification with duplicate delivery proof.
+2. Shopify-like `order.created` -> validated order-intake proof with reviewable mapping/audit evidence.
+3. Stripe-like `payment.succeeded` -> validated payment-intake proof with duplicate delivery evidence.
+
+For Mock Job 01, the Shopify and Stripe flows are the bridge-side green path. Airtable Ops Ledger and spreadsheet-friendly output proof is intentionally paired through `sheets-airtable-sync` rather than claimed as a bridge write.
 
 ## Field mapping deliverable
 

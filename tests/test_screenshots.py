@@ -12,6 +12,7 @@ EXPECTED = [
     "06-dead-letter.png",
     "07-quality-gates.png",
     "08-debugger-handoff.png",
+    "09-mock-job-01-bridge-proof.png",
 ]
 
 

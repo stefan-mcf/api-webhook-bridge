@@ -12,6 +12,7 @@ browser tabs, cloud resources, or live external-service context.
 - `06-dead-letter.png` — invalid payload routed to review evidence.
 - `07-quality-gates.png` — local test proof backed by the full gate bundle.
 - `08-debugger-handoff.png` — green-path bridge proof plus repair-path handoff.
+- `09-mock-job-01-bridge-proof.png` — Mock Job 01 Shopify order + Stripe payment intake proof before Airtable/Sheets output proof.
 
 Validation notes:
 
