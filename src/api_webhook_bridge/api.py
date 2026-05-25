@@ -15,7 +15,10 @@ from api_webhook_bridge.mapping import list_mappings
 app = FastAPI(
     title="API Webhook Bridge",
     version="0.2.0",
-    description="Fixture-safe Automation Kit backed API/webhook bridge proof.",
+    description=(
+        "Fixture-safe FastAPI webhook bridge for local validation, mapping, "
+        "and audit-backed verification."
+    ),
 )
 
 MAX_WEBHOOK_BODY_BYTES = 64_000

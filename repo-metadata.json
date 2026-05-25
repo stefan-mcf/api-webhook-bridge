@@ -1,7 +1,7 @@
 {
   "name": "api-webhook-bridge",
   "title": "API Webhook Bridge",
-  "description": "FastAPI webhook bridge template for source-to-destination automation with validation, mapping, mock adapters, and audit logs.",
+  "description": "Fixture-safe FastAPI webhook bridge for source-to-destination automation with validation, mapping, mock adapters, and audit logs.",
   "private": true,
   "topics": [
     "fastapi",
@@ -13,5 +13,5 @@
     "hubspot",
     "fixture-safe"
   ],
-  "automation_kit_relationship": "Concrete companion template repo; Automation Kit remains the reusable local automation framework."
+  "automation_kit_relationship": "Concrete companion implementation repo; Automation Kit remains the reusable local automation framework."
 }

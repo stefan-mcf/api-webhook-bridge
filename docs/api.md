@@ -13,13 +13,23 @@ OpenAPI JSON is available at `http://127.0.0.1:8011/openapi.json` and docs at `h
 
 | Method | Path | Purpose |
 |---|---|---|
-| GET | `/health` | Fixture-safe health check |
-| GET | `/integrations` | Lists source/destination proof scope and Automation Kit backbone contract |
-| GET | `/mappings` | Lists visible mapping configs |
-| POST | `/webhooks/hubspot-like` | Contact to Airtable-style upsert |
-| POST | `/webhooks/shopify-like` | Shopify order intake proof for validation/mapping/audit before downstream ops output |
-| POST | `/webhooks/stripe-like` | Stripe payment intake and duplicate-delivery proof before downstream ops output |
-| GET | `/audit/events` | Local success audit proof |
-| GET | `/audit/dead-letter` | Local dead-letter proof |
+| GET | `/health` | Fixture-safe health check. |
+| GET | `/integrations` | Lists supported source/destination scope and local integration contract. |
+| GET | `/mappings` | Lists visible mapping configs. |
+| POST | `/webhooks/hubspot-like` | Named contact intake route. |
+| POST | `/webhooks/shopify-like` | Named order intake route. |
+| POST | `/webhooks/stripe-like` | Named payment intake route. |
+| POST | `/webhooks/{source}` | Generic route for approved sources only. Unknown sources return `404`. |
+| GET | `/audit/events` | Local success and duplicate-processing audit output. |
+| GET | `/audit/dead-letter` | Local dead-letter output for rejected payloads. |
 
-Named routes are intentionally buyer-legible for OpenAPI screenshots. The generic `/webhooks/{source}` route remains for local convenience.
+## Request contract
+
+- Request bodies are streamed and rejected above the 64KB payload limit.
+- Payloads must be valid JSON.
+- Payloads must decode to a JSON object; arrays and scalar values are rejected.
+- Named webhook routes and the generic `/webhooks/{source}` route share the same payload handling and bridge logic.
+- The generic route accepts only `hubspot-like`, `shopify-like`, and `stripe-like`.
+- Unknown generic-route sources return `404` before bridge processing.
+
+Named routes are intentionally buyer-legible for OpenAPI screenshots and direct local testing. The generic route remains useful for operator convenience and adaptation work.

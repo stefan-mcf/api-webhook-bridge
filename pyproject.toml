@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "api-webhook-bridge"
-version = "0.1.0"
-description = "Fixture-safe API/webhook bridge proof built around Automation Kit patterns"
+version = "0.2.0"
+description = "Fixture-safe FastAPI webhook bridge for local validation, mapping, and audit-backed integration walkthroughs"
 requires-python = ">=3.10"
 license = "MIT"
 dependencies = [

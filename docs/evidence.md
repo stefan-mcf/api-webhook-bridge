@@ -15,7 +15,7 @@ PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" python -m ruff check .
 PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" python -m mypy src
 ```
 
-Current implementation has passing pytest, Ruff, and mypy gates after the Automation Kit backed bridge work.
+Current implementation has passing pytest, Ruff, and mypy gates after the Automation Kit-backed bridge work.
 
 ## One-command sandbox walkthrough
 
@@ -25,7 +25,7 @@ PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" examples/run-sandbox-walkthrough.sh
 PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" python scripts/verify_sandbox_responses.py
 ```
 
-The walkthrough starts a local FastAPI server, posts the synthetic fixtures, saves pretty JSON responses under `examples/api-responses/`, fetches audit/dead-letter endpoints, verifies the saved response contract with `scripts/verify_sandbox_responses.py`, and shuts the server down. It fails before artifact regeneration if the target port is already in use, which prevents stale server state from being mistaken for a clean proof run.
+The walkthrough starts a local FastAPI server, posts the synthetic fixtures, saves pretty JSON responses under `examples/api-responses/`, fetches audit and dead-letter endpoints, verifies the saved response contract with `scripts/verify_sandbox_responses.py`, and shuts the server down. It fails before artifact regeneration if the target port is already in use, which prevents stale server state from being mistaken for a clean verification run.
 
 Generated response files include:
 
@@ -40,10 +40,7 @@ Generated response files include:
 - `examples/api-responses/audit-events.json`
 - `examples/api-responses/dead-letter.json`
 
-For Mock Job 01, the canonical bridge-side proof bundle is the subset that covers health,
-mappings, Shopify intake, Stripe intake, duplicate handling, and dead-letter behavior. Buyer-facing
-downstream Airtable/Sheets-style output proof is intentionally owned by `sheets-airtable-sync`
-rather than claimed here.
+For Mock Job 01, the canonical bridge-side verification bundle is the subset that covers health, mappings, Shopify intake, Stripe intake, duplicate handling, and dead-letter behavior. Buyer-facing downstream Airtable/Sheets-style output proof is intentionally owned by `sheets-airtable-sync` rather than claimed here.
 
 ## Manual API smoke commands
 
@@ -66,4 +63,4 @@ See `docs/screenshots/README.md` and `docs/sandbox-walkthrough.md`.
 
 ## Safety notes
 
-All examples are synthetic. Runtime audit logs under `.local/` are ignored. The proof uses no live credentials, real client data, public visibility change, cloud resource, or external sharing action.
+All examples are synthetic. Runtime audit logs under `.local/` are ignored. The verification package uses no live credentials, real client data, public visibility change, cloud resource, or external sharing action.

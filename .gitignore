@@ -17,6 +17,12 @@ artifacts/local/
 .local/
 *.log
 
+# Local Hermes planning scratch.
+.hermes/
+
+# Local-only live callback captures and tunnel experiments.
+examples/live/
+
 # Private planning, roadmap, and operator checkpoint material.
 PLAN.md
 CONCEPT_SCOPE.md
