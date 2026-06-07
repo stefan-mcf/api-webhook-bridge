@@ -196,3 +196,6 @@ See `docs/automation-kit-backbone.md` and `docs/automation-kit-case-study-contra
 ## First live-integration milestone
 
 Map one approved source event to the destination schema, run it against synthetic or approved sample data, return the validated output payload, audit log, retry/idempotency notes, and a handoff note. Live credential connection happens only after that verification slice is reviewed.
+## Automation Tools Catalog
+
+Part of [Stefan's automation tools catalog](https://github.com/stefan-mcf/automation-tools).
