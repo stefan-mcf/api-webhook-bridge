@@ -4,7 +4,7 @@ FastAPI service for validating webhook events, mapping them into destination-sha
 
 [Read the case study](docs/case-study.md) · [Review the API](docs/api.md) · [Run the walkthrough](docs/sandbox-walkthrough.md)
 
-## What this repository does
+## Capabilities
 
 - Accepts local webhook-style JSON payloads for contact, order, and payment flows.
 - Validates request shape before any mapping logic runs.
