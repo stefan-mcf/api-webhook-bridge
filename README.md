@@ -1,6 +1,8 @@
 # API Webhook Bridge
 
-Fixture-safe FastAPI webhook bridge for receiving webhook-style events locally, validating payloads, mapping fields into destination-shaped operations, handling duplicates, and recording audit/dead-letter output before any live credentials are introduced.
+FastAPI service for validating webhook events, mapping them into destination-shaped operations, handling duplicates, and recording audit and dead-letter output.
+
+[Read the case study](docs/case-study.md) · [Review the API](docs/api.md) · [Run the walkthrough](docs/sandbox-walkthrough.md)
 
 ## What this repository does
 
@@ -10,7 +12,7 @@ Fixture-safe FastAPI webhook bridge for receiving webhook-style events locally, 
 - Records successful processing and duplicate handling in local audit output.
 - Captures invalid payloads in a local dead-letter log for review.
 - Exposes a small OpenAPI surface for repeatable local verification and screenshots.
-- Stays fixture-safe: no live provider calls, no cloud deployment, and no customer data.
+- Runs locally with controlled scenarios: no live provider calls, cloud deployment, or customer data.
 
 ## Included local flows
 
@@ -106,16 +108,16 @@ Request contract notes:
 
 These are adaptation paths, not live-provider claims. Live credentials, OAuth scopes, provider dashboards, and real webhook delivery logs remain separate gated work.
 
-## Safety boundary
+## Operating boundary
 
 - Fixture-safe synthetic examples only.
 - Empty credential placeholders only.
-- `fixture_safe: true` and `live_services_used: false` are returned in proof responses.
+- `fixture_safe: true` and `live_services_used: false` are returned in verification responses.
 - Runtime audit files under `.local/` are ignored.
 - No live external-service calls, client data, cloud resources, public visibility changes, releases, or external sharing actions are part of the local verification package.
-- Public export, existing-repo visibility changes, private collaborator access, live external-service proof, and cloud deployment remain human-gated.
+- Public export, existing-repo visibility changes, private collaborator access, live external-service verification, and cloud deployment remain human-gated.
 
-## Evidence package
+## Verification package
 
 The repo keeps strong verification artifacts, but they support the runnable bridge surface rather than replace it.
 
@@ -137,25 +139,25 @@ Core artifacts:
 - `docs/screenshots/06-dead-letter.png`
 - `docs/screenshots/09-mock-job-01-bridge-proof.png`
 
-[![API Webhook Bridge flow proof](docs/screenshots/01-flow-overview.png)](docs/screenshots/01-flow-overview.png)
+[![API Webhook Bridge flow](docs/screenshots/01-flow-overview.png)](docs/screenshots/01-flow-overview.png)
 
-[![Local API proof](docs/screenshots/02-openapi-webhook-endpoints.png)](docs/screenshots/02-openapi-webhook-endpoints.png)
+[![Local API endpoints](docs/screenshots/02-openapi-webhook-endpoints.png)](docs/screenshots/02-openapi-webhook-endpoints.png)
 
-[![Contact bridge proof](docs/screenshots/03-contact-bridge-proof.png)](docs/screenshots/03-contact-bridge-proof.png)
+[![Contact bridge run](docs/screenshots/03-contact-bridge-proof.png)](docs/screenshots/03-contact-bridge-proof.png)
 
-[![Mapping config proof](docs/screenshots/04-mapping-config.png)](docs/screenshots/04-mapping-config.png)
+[![Mapping configuration](docs/screenshots/04-mapping-config.png)](docs/screenshots/04-mapping-config.png)
 
-[![Idempotency audit proof](docs/screenshots/05-idempotency-audit.png)](docs/screenshots/05-idempotency-audit.png)
+[![Idempotency audit](docs/screenshots/05-idempotency-audit.png)](docs/screenshots/05-idempotency-audit.png)
 
-[![Dead-letter proof](docs/screenshots/06-dead-letter.png)](docs/screenshots/06-dead-letter.png)
+[![Dead-letter handling](docs/screenshots/06-dead-letter.png)](docs/screenshots/06-dead-letter.png)
 
-[![Quality gate proof](docs/screenshots/07-quality-gates.png)](docs/screenshots/07-quality-gates.png)
+[![Quality checks](docs/screenshots/07-quality-gates.png)](docs/screenshots/07-quality-gates.png)
 
-[![Debugger handoff proof](docs/screenshots/08-debugger-handoff.png)](docs/screenshots/08-debugger-handoff.png)
+[![Debugger handoff](docs/screenshots/08-debugger-handoff.png)](docs/screenshots/08-debugger-handoff.png)
 
-[![Mock Job 01 Shopify and Stripe intake proof](docs/screenshots/09-mock-job-01-bridge-proof.png)](docs/screenshots/09-mock-job-01-bridge-proof.png)
+[![Shopify and Stripe intake run](docs/screenshots/09-mock-job-01-bridge-proof.png)](docs/screenshots/09-mock-job-01-bridge-proof.png)
 
-The screenshots are generated proof panels from synthetic local fixtures. They show no live account screens, credentials, browser tabs, private desktop context, or customer data.
+The screenshots are generated from controlled local runs. They show no live account screens, credentials, browser tabs, private desktop context, or customer data.
 
 ## Project docs
 
@@ -196,6 +198,3 @@ See `docs/automation-kit-backbone.md` and `docs/automation-kit-case-study-contra
 ## First live-integration milestone
 
 Map one approved source event to the destination schema, run it against synthetic or approved sample data, return the validated output payload, audit log, retry/idempotency notes, and a handoff note. Live credential connection happens only after that verification slice is reviewed.
-## Automation Tools Catalog
-
-Part of [Stefan's automation tools catalog](https://github.com/stefan-mcf/automation-tools).
