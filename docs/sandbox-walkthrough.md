@@ -2,7 +2,7 @@
 
 This walkthrough shows how to inspect and verify the fixture-safe API/webhook bridge locally. It covers the pre-live integration slice: receive a source webhook, validate the payload, map fields to a target-shaped operation, handle duplicate delivery, write audit/dead-letter records, and leave reviewable evidence before any live credentials are connected.
 
-## What this verifies
+## Expected results
 
 - A FastAPI webhook receiver with OpenAPI-visible routes.
 - Explicit field mapping from source payloads to destination operations.
