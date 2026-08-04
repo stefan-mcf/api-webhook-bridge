@@ -1,4 +1,4 @@
-"""FastAPI surface for the fixture-safe bridge proof."""
+"""FastAPI surface for the fixture-safe bridge."""
 
 from __future__ import annotations
 

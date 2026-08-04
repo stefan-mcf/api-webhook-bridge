@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify saved sandbox walkthrough responses match the buyer-proof contract."""
+"""Validate saved local responses against the bridge contract."""
 
 from __future__ import annotations
 
@@ -114,7 +114,7 @@ def main() -> None:
     if not dead_letters:
         raise AssertionError("dead-letter.json must include at least one validation failure")
 
-    print(f"Sandbox response verification passed for {len(REQUIRED_FILES)} artifacts")
+    print(f"Saved response validation passed for {len(REQUIRED_FILES)} files")
 
 
 if __name__ == "__main__":

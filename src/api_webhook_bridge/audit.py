@@ -1,8 +1,9 @@
-"""Structured local audit and dead-letter proof surfaces."""
+"""Structured local audit and dead-letter surfaces."""
 
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -47,7 +48,7 @@ def audit_event(
 
 
 class AuditStore:
-    """JSONL-backed local audit/dead-letter store for safe proof runs."""
+    """JSONL-backed local audit and dead-letter store."""
 
     def __init__(self, root: Path = DEFAULT_AUDIT_DIR) -> None:
         self.root = root
@@ -74,7 +75,8 @@ class AuditStore:
     def _append(self, path: Path, event: dict[str, Any]) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
         record = dict(event)
-        record.setdefault("recorded_at", datetime.now(timezone.utc).isoformat())
+        recorded_at = os.environ.get("API_WEBHOOK_BRIDGE_RECORDED_AT")
+        record.setdefault("recorded_at", recorded_at or datetime.now(timezone.utc).isoformat())
         with path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(record, sort_keys=True) + "\n")
 

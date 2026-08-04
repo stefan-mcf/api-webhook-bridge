@@ -11,6 +11,7 @@ HOST="127.0.0.1"
 BASE_URL="http://${HOST}:${PORT}"
 OUT_DIR="examples/api-responses"
 PYTHON_BIN="${PYTHON_BIN:-python}"
+export API_WEBHOOK_BRIDGE_RECORDED_AT="${API_WEBHOOK_BRIDGE_RECORDED_AT:-2026-05-06T00:00:00Z}"
 mkdir -p "$OUT_DIR"
 
 PORT_BUSY=$(HOST="$HOST" PORT="$PORT" "$PYTHON_BIN" - <<'PY'
@@ -25,7 +26,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
 PY
 )
 if [[ "$PORT_BUSY" == "1" ]]; then
-  echo "Port $HOST:$PORT is already in use; set PORT=<free-port> or stop the existing server before running the walkthrough" >&2
+  echo "Port $HOST:$PORT is already in use; set PORT=<free-port> or stop the existing server before running validation" >&2
   exit 1
 fi
 
@@ -39,7 +40,7 @@ trap cleanup EXIT
 
 rm -f .local/audit/events.jsonl .local/audit/dead-letter.jsonl 2>/dev/null || true
 
-$PYTHON_BIN -m uvicorn api_webhook_bridge.api:app --host "$HOST" --port "$PORT" > .local-sandbox-walkthrough.log 2>&1 &
+$PYTHON_BIN -m uvicorn api_webhook_bridge.api:app --host "$HOST" --port "$PORT" > .local-validation.log 2>&1 &
 SERVER_PID=$!
 
 for _ in $(seq 1 80); do
@@ -65,6 +66,6 @@ curl -fsS -X POST "$BASE_URL/webhooks/hubspot-like"   -H 'content-type: applicat
 curl -fsS "$BASE_URL/audit/events" | $PYTHON_BIN -m json.tool > "$OUT_DIR/audit-events.json"
 curl -fsS "$BASE_URL/audit/dead-letter" | $PYTHON_BIN -m json.tool > "$OUT_DIR/dead-letter.json"
 
-$PYTHON_BIN scripts/verify_sandbox_responses.py
+$PYTHON_BIN scripts/validate_saved_responses.py
 
-echo "Sandbox walkthrough responses written to $OUT_DIR"
+echo "Local validation responses written to $OUT_DIR"
