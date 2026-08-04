@@ -71,7 +71,7 @@
             "live_services_used": false
         }
     ],
-    "handoff_note": "Mapped payment.succeeded into audit record and Slack-style notification with idempotency proof.",
+    "handoff_note": "Mapped payment.succeeded into an audit record and Slack-style notification with a stable idempotency control.",
     "fixture_safe": true,
     "live_services_used": false
 }

@@ -2,7 +2,7 @@
   "name": "api-webhook-bridge",
   "title": "API Webhook Bridge",
   "description": "Fixture-safe FastAPI webhook bridge for source-to-destination automation with validation, mapping, mock adapters, and audit logs.",
-  "private": true,
+  "private": false,
   "topics": [
     "fastapi",
     "api-integration",

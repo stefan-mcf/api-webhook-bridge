@@ -1,1 +1,1 @@
-"""API Webhook Bridge proof package."""
+"""API Webhook Bridge implementation package."""

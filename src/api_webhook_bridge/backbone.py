@@ -2,7 +2,7 @@
 
 This is the only production module that imports Automation Kit directly. Keeping the
 boundary here makes the spoke's reusable-framework dependency explicit while leaving
-case-study mapping code focused on buyer-specific API/webhook flows.
+mapping code focused on buyer-specific API and webhook flows.
 """
 
 from __future__ import annotations
@@ -42,7 +42,7 @@ def automation_kit_contract() -> dict[str, Any]:
 
 
 def load_backbone_workflow(pattern_name: str) -> WorkflowJSON:
-    """Load one Automation Kit workflow by name for documentation/contract proof."""
+    """Load one Automation Kit workflow by name for contract validation."""
 
     return load_workflow_json(AUTOMATION_KIT_PATTERNS / pattern_name)
 

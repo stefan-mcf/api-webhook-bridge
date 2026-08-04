@@ -2,25 +2,25 @@
 
 Status: public at <https://github.com/stefan-mcf/api-webhook-bridge>.
 
-## Public claim
+## Public scope
 
-- [x] The repo claims fixture-safe pre-live integration proof, not live external-service integration.
+- [x] The repository presents a synthetic, pre-live integration implementation rather than a live provider connection.
 - [x] README and docs do not claim production deployment, hosted availability, real customer data, or completed external delivery.
 - [x] Live external-service access, cloud resources, releases, and external sharing remain gated.
 
-## Evidence package
+## Portfolio assets
 
-- [x] `docs/sandbox-walkthrough.md` explains the source -> bridge -> mapping -> destination -> audit/dead-letter flow.
-- [x] `docs/screenshots/01-flow-overview.png` exists and is readable at GitHub width.
-- [x] OpenAPI, sandbox event, mapping, idempotency/audit, and dead-letter screenshots exist.
-- [x] Screenshot README explains what every image proves.
+- [x] `docs/local-operation.md` explains the source -> bridge -> mapping -> destination -> audit/dead-letter flow.
+- [x] `docs/screenshots/01-system-flow.png` exists and is readable at GitHub width.
+- [x] Interface, processing, guardrail, readback, and validation images exist.
+- [x] The image index explains every functional panel.
 - [x] All screenshots show synthetic data only and no private desktop/browser/account context.
 
 ## Reuse and adaptation
 
 - [x] README/docs describe how the bridge adapts to provider-shaped payloads without requiring live credentials.
 - [x] Provider names are framed as source/target shapes unless live credentials are explicitly approved.
-- [x] The one-command walkthrough regenerates example responses locally.
+- [x] One command regenerates and validates example responses locally.
 
 ## Privacy and artifact hygiene
 
@@ -44,7 +44,7 @@ export AUTOMATION_KIT_PATH=../automation-kit
 PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" python -m pytest -q
 PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" python -m ruff check .
 PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" python -m mypy src
-PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" examples/run-sandbox-walkthrough.sh
+PYTHONPATH="$AUTOMATION_KIT_PATH/src:src" examples/run-local-validation.sh
 python - <<'PY'
 from pathlib import Path
 import json

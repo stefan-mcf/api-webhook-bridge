@@ -60,7 +60,7 @@ Non-object JSON, oversized requests, unknown sources, and missing required field
 
 ### The OpenAPI surface is part of the handover
 
-Named endpoints keep the service understandable to an implementation team and make the local walkthrough easy to reproduce. The generic endpoint supports the same approved source set without turning the service into an unbounded proxy.
+Named endpoints keep the service understandable to an implementation team and make the local scenarios easy to reproduce. The generic endpoint supports the same approved source set without turning the service into an unbounded proxy.
 
 ## A representative payment flow
 
@@ -82,8 +82,8 @@ The completed repository includes:
 - three source-to-destination mapping configurations;
 - named and generic webhook routes;
 - idempotency, audit, and dead-letter handling;
-- a one-command walkthrough that regenerates request and response records;
-- 29 automated tests across API, mapping, bridge, audit, idempotency, and failure behaviour;
+- one command that regenerates and validates request and response records;
+- automated checks across API, mapping, bridge, audit, idempotency, failure behaviour, and image integrity;
 - screenshots generated from the committed local runs.
 
 This gives an implementation team a concrete integration contract before provider access is requested and a clear path for explaining successful, duplicate, and rejected events.
@@ -97,8 +97,8 @@ Moving the bridge into production would add scoped provider credentials, durable
 ## Explore the implementation
 
 - [API notes](api.md)
-- [Local walkthrough](sandbox-walkthrough.md)
-- [Validation record](evidence.md)
+- [Local operation](local-operation.md)
+- [Validation record](validation.md)
 - [Production extension notes](production-path.md)
 - [Generated screenshots](screenshots/README.md)
 - [Back to the repository overview](../README.md)

@@ -32,5 +32,5 @@ docs/*checkpoint*.md
 docs/*client-draft*.md
 docs/*[pP][rR][oO][pP][oO][sS][aA][lL]*.md
 
-# Generated screenshot staging pages; keep final PNG evidence only.
+# Generated image staging pages; keep final PNGs only.
 docs/screenshots/_capture/

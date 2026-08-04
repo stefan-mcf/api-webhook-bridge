@@ -1,4 +1,4 @@
-"""Local idempotency proof stores for fixture-safe webhook runs."""
+"""Local idempotency stores for fixture-safe webhook runs."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import Any
 
 
 class InMemoryIdempotencyStore:
-    """Tiny in-memory store used by tests and local proof runs."""
+    """Tiny in-memory store used by tests and local runs."""
 
     def __init__(self) -> None:
         self._responses: dict[str, dict[str, Any]] = {}
@@ -25,7 +25,7 @@ class InMemoryIdempotencyStore:
 
 
 class JsonlIdempotencyStore(InMemoryIdempotencyStore):
-    """Optional JSONL-backed local proof store under ignored .local paths."""
+    """Optional JSONL-backed local store under ignored .local paths."""
 
     def __init__(self, path: Path) -> None:
         super().__init__()

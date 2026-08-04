@@ -1,23 +1,18 @@
-# Screenshot Evidence
+# Functional Image Sequence
 
-These screenshots are generated verification panels from current local API responses, mapping JSON, and synthetic fixtures. They support the repo's runnable bridge story; they are not a substitute for the local API surface, walkthrough, or fixture artifacts.
+These six generated panels present the current local API responses, mappings, and operating boundaries in the same order as the repository overview.
 
-All screenshots contain no secrets, real customer data, account screens, private browser tabs, cloud resources, or live external-service context.
+1. `01-system-flow.png`: sources, control stages, and outcomes.
+2. `02-interface-surface.png`: named HTTP routes and service contract.
+3. `03-core-processing.png`: contact input and mapped operation readback.
+4. `04-event-guardrails.png`: duplicate and invalid-event handling.
+5. `05-operating-readback.png`: accepted order and payment outcomes.
+6. `06-validation-scope.png`: quality gates, current totals, and scope boundary.
 
-- `01-flow-overview.png` — source -> bridge -> mapping -> audit/dead-letter flow.
-- `02-openapi-webhook-endpoints.png` — local health, mapping, webhook, and audit routes.
-- `03-contact-bridge-proof.png` — contact fixture to Airtable-style upsert evidence.
-- `04-mapping-config.png` — explicit JSON field mapping before credential work.
-- `05-idempotency-audit.png` — duplicate payment replay recorded as audit evidence.
-- `06-dead-letter.png` — invalid payload routed to review evidence.
-- `07-quality-gates.png` — local test proof backed by the full gate bundle.
-- `08-debugger-handoff.png` — green-path bridge proof plus repair-path handoff.
-- `09-mock-job-01-bridge-proof.png` — Mock Job 01 Shopify order + Stripe payment intake verification before Airtable/Sheets output proof.
+Every image is generated at 1400 x 800, uses synthetic identifiers, excludes browser or provider chrome, and carries deterministic validation metadata. Tests enforce the exact names, dimensions, order, minimum rendered size, metadata, and public wording.
 
-## Validation notes
+Regenerate after changing source fixtures, saved responses, README references, or generator copy:
 
-- Final images are generated at 1280x760 so README panels remain readable.
-- Every PNG carries verification metadata and passes size/variance checks in screenshot tests.
-- Screenshot review confirms no secrets, private browser/account details, or live context.
-- Regenerate after changing fixtures, examples, README references, or screenshot copy:
-  `PYTHONPATH=src python scripts/capture_screenshots.py`.
+```bash
+python scripts/capture_screenshots.py
+```

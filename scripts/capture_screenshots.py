@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 import textwrap
@@ -14,19 +15,26 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs" / "screenshots"
 OUT.mkdir(parents=True, exist_ok=True)
 
-WIDTH = 1280
-HEIGHT = 760
-BG = (10, 15, 28)
+WIDTH = 1400
+HEIGHT = 800
+BG = (11, 17, 32)
 PANEL = (17, 24, 39)
-PANEL_2 = (25, 35, 56)
-TEXT = (226, 232, 240)
+PANEL_2 = (24, 34, 53)
+TEXT = (229, 231, 235)
 MUTED = (148, 163, 184)
-GREEN = (74, 222, 128)
 BLUE = (96, 165, 250)
-YELLOW = (250, 204, 21)
-PINK = (244, 114, 182)
+GREEN = (74, 222, 128)
 RED = (248, 113, 113)
 BORDER = (51, 65, 85)
+
+HEADER_BOX = (32, 28, 1368, 122)
+FOOTER_BOX = (32, 730, 1368, 772)
+TWO_COLUMN_BOXES = ((52, 154, 674, 670), (726, 154, 1348, 670))
+THREE_COLUMN_BOXES = (
+    (52, 154, 446, 670),
+    (503, 154, 897, 670),
+    (954, 154, 1348, 670),
+)
 
 
 def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
@@ -51,32 +59,59 @@ def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.Im
 
 TITLE_FONT = font(34, bold=True)
 SUBTITLE_FONT = font(18)
-SMALL_FONT = font(16)
-MONO_SMALL = font(15)
+PANEL_TITLE_FONT = font(18, bold=True)
+BODY_FONT = font(16)
+MONO_FONT = font(15)
 
 
-def run(cmd: list[str], *, max_lines: int = 14) -> list[str]:
-    env = {**os.environ, "PYTHONPATH": os.environ.get("PYTHONPATH", "src")}
+def run(cmd: list[str], *, max_lines: int = 30) -> list[str]:
+    env = {
+        **os.environ,
+        "PYTHONPATH": os.environ.get("PYTHONPATH", "src"),
+        "PYTHONWARNINGS": "ignore",
+    }
     proc = subprocess.run(cmd, cwd=ROOT, text=True, capture_output=True, check=True, env=env)
     combined = (proc.stdout + proc.stderr).strip().splitlines()
-    return combined[:max_lines] or ["command completed with no output"]
+    return combined[:max_lines] or ["command completed"]
+
+
+def passed_count(lines: list[str]) -> int:
+    summary = next((line for line in reversed(lines) if " passed" in line), "")
+    match = re.search(r"(?P<passed>\d+) passed", summary)
+    if not match:
+        raise RuntimeError(f"unable to read pytest result from: {lines!r}")
+    return int(match.group("passed"))
+
+
+def validation_summary(core_lines: list[str], image_lines: list[str]) -> list[str]:
+    core = passed_count(core_lines)
+    image_checks = passed_count(image_lines)
+    return [
+        f"core checks: {core} passed",
+        f"image checks: {image_checks} passed",
+        f"full suite: {core + image_checks} passed",
+    ]
 
 
 def load_json(path: str) -> dict[str, Any]:
     return json.loads((ROOT / path).read_text())
 
 
-def compact_json_lines(path: str, keys: list[str], *, max_items: int = 12) -> list[str]:
+def response_summary(path: str) -> list[str]:
     data = load_json(path)
-    lines: list[str] = []
-    for key in keys:
-        value = data.get(key)
-        if isinstance(value, (dict, list)):
-            encoded = json.dumps(value, sort_keys=True)
-            lines.append(f"{key}={encoded[:96]}")
-        else:
-            lines.append(f"{key}={value}")
-    return lines[:max_items]
+    operations = data.get("destination_operations")
+    operation_list = operations if isinstance(operations, list) else []
+    systems = [str(item.get("system")) for item in operation_list if isinstance(item, dict)]
+    return [
+        f"status={data.get('status')}",
+        f"mapping={data.get('mapping_name')}",
+        f"operation_count={len(operation_list)}",
+        f"destination_systems={','.join(systems) or 'none'}",
+        f"duplicate={data.get('duplicate')}",
+        f"safe_to_retry={data.get('safe_to_retry')}",
+        f"audit_id={'present' if data.get('audit_id') else 'missing'}",
+        f"correlation_id={'present' if data.get('correlation_id') else 'missing'}",
+    ]
 
 
 def wrap_lines(lines: list[str], width: int) -> list[str]:
@@ -102,25 +137,24 @@ def draw_panel(
     code: bool = False,
 ) -> None:
     x1, y1, x2, y2 = box
-    draw.rounded_rectangle(box, radius=22, fill=PANEL, outline=BORDER, width=2)
-    draw.rectangle((x1, y1, x1 + 8, y2), fill=accent)
-    draw.text((x1 + 26, y1 + 20), title, font=SUBTITLE_FONT, fill=accent)
-    y = y1 + 58
-    selected_font = MONO_SMALL if code else SMALL_FONT
-    usable_width = max(220, x2 - x1 - 70)
-    approx_char_px = 9 if code else 10
-    max_chars = max(34, usable_width // approx_char_px)
+    draw.rounded_rectangle(box, radius=20, fill=PANEL, outline=BORDER, width=2)
+    draw.rectangle((x1, y1, x1 + 6, y2), fill=accent)
+    draw.text((x1 + 26, y1 + 20), title, font=PANEL_TITLE_FONT, fill=TEXT)
+    y = y1 + 62
+    selected_font = MONO_FONT if code else BODY_FONT
+    max_chars = max(34, (x2 - x1 - 66) // (9 if code else 10))
     for line in wrap_lines(lines, max_chars)[:18]:
         fill = TEXT
-        if line.startswith(("PASS", "✓", "fixture_safe=true", "live_services_used=false")):
+        lowered = line.lower()
+        if line.startswith(("PASS", "OK", "fixture_safe=true")) or "passed" in lowered:
             fill = GREEN
-        elif line.startswith(("REFUSE", "unsafe", "blocked")) or "FAILED" in line:
+        elif line.startswith(("REFUSE", "BLOCK", "DENY")) or "failed" in lowered:
             fill = RED
         elif line.startswith(("$", "python", "PYTHONPATH")):
-            fill = YELLOW
+            fill = BLUE
         draw.text((x1 + 26, y), line, font=selected_font, fill=fill)
-        y += 24 if code else 26
-        if y > y2 - 34:
+        y += 24 if code else 28
+        if y > y2 - 32:
             break
 
 
@@ -129,21 +163,20 @@ def render(
     title: str,
     subtitle: str,
     panels: list[dict[str, Any]],
-    footer: str = "fixture_safe=true  live_services_used=false  synthetic_data_only=true",
+    footer: str = "Local inputs | No provider writes | Synthetic records",
 ) -> None:
     image = Image.new("RGB", (WIDTH, HEIGHT), BG)
     draw = ImageDraw.Draw(image)
 
-    for x in range(0, WIDTH, 80):
+    for x in range(0, WIDTH, 100):
         draw.line((x, 0, x, HEIGHT), fill=(15, 23, 42))
-    for y in range(0, HEIGHT, 80):
+    for y in range(0, HEIGHT, 100):
         draw.line((0, y, WIDTH, y), fill=(15, 23, 42))
 
-    draw.rounded_rectangle(
-        (30, 28, WIDTH - 30, 116), radius=24, fill=PANEL_2, outline=BORDER, width=2
-    )
-    draw.text((58, 48), title, font=TITLE_FONT, fill=TEXT)
-    draw.text((60, 90), subtitle, font=SUBTITLE_FONT, fill=MUTED)
+    draw.rounded_rectangle(HEADER_BOX, radius=24, fill=PANEL_2, outline=BORDER, width=2)
+    draw.text((60, 50), title, font=TITLE_FONT, fill=TEXT)
+    draw.text((60, 94), subtitle, font=SUBTITLE_FONT, fill=MUTED)
+
     for panel in panels:
         draw_panel(
             draw,
@@ -154,19 +187,17 @@ def render(
             code=bool(panel.get("code", False)),
         )
 
-    draw.rounded_rectangle(
-        (30, HEIGHT - 54, WIDTH - 30, HEIGHT - 18), radius=16, fill=PANEL_2, outline=BORDER, width=1
-    )
-    draw.text((54, HEIGHT - 45), footer, font=SMALL_FONT, fill=GREEN)
+    draw.rounded_rectangle(FOOTER_BOX, radius=16, fill=PANEL_2, outline=BORDER, width=1)
+    draw.text((56, 742), footer, font=BODY_FONT, fill=MUTED)
 
     metadata = PngImagePlugin.PngInfo()
-    metadata.add_text("Proof", f"{title}\n{subtitle}\n{footer}")
+    metadata.add_text("SM-Systems-Validation", f"{title}\n{subtitle}\n{footer}")
     image.save(path, pnginfo=metadata, optimize=True)
 
     stat = ImageStat.Stat(image)
     if path.stat().st_size < 25_000 or max(stat.stddev) < 20:
         raise RuntimeError(
-            f"screenshot may be unreadable/blank: {path} "
+            f"image may be unreadable or blank: {path} "
             f"size={path.stat().st_size} stddev={stat.stddev}"
         )
 
@@ -174,300 +205,221 @@ def render(
 def main() -> None:
     py = sys.executable
     contact = load_json("examples/input/contact-created.json")
-    payment = load_json("examples/input/stripe-payment-succeeded.json")
-
-    health = compact_json_lines(
-        "examples/api-responses/health.json",
-        ["status", "fixture_safe", "live_services_used"],
+    invalid_contact = load_json("examples/input/contact-created-invalid.json")
+    health = load_json("examples/api-responses/health.json")
+    contact_response = response_summary("examples/api-responses/hubspot-contact-response.json")
+    order_response = response_summary("examples/api-responses/shopify-order-response.json")
+    payment_response = response_summary("examples/api-responses/stripe-payment-response.json")
+    duplicate_response = response_summary(
+        "examples/api-responses/stripe-payment-duplicate-response.json"
     )
-    hubspot = compact_json_lines(
-        "examples/api-responses/hubspot-contact-response.json",
-        ["status", "source_event_type", "mapping_name", "safe_to_retry", "duplicate", "audit_id"],
+    dead_letter_response = response_summary("examples/api-responses/dead-letter-response.json")
+    core_test_lines = run(
+        [py, "-m", "pytest", "-q", "-p", "no:warnings", "tests", "-k", "not screenshots"]
     )
-    shopify = compact_json_lines(
-        "examples/api-responses/shopify-order-response.json",
-        [
-            "status",
-            "source_event_type",
-            "mapping_name",
-            "destination_operations",
-            "idempotency_key",
-        ],
-    )
-    stripe = compact_json_lines(
-        "examples/api-responses/stripe-payment-response.json",
-        [
-            "status",
-            "source_event_type",
-            "mapping_name",
-            "destination_operations",
-            "idempotency_key",
-        ],
-    )
-    duplicate = compact_json_lines(
-        "examples/api-responses/stripe-payment-duplicate-response.json",
-        ["status", "duplicate", "idempotency_key", "retry_policy", "audit_id"],
-    )
-    dead_letter = compact_json_lines(
-        "examples/api-responses/dead-letter-response.json",
-        ["status", "validation_errors", "retry_policy", "safe_to_retry", "audit_id"],
-    )
-    mapping = compact_json_lines(
-        "configs/mappings/hubspot-contact-to-airtable.json",
-        ["name", "source", "source_event_type", "destination", "required_fields"],
-    )
-    pytest_lines = run(
-        [py, "-m", "pytest", "-q", "tests", "-k", "not screenshots"], max_lines=10
+    image_test_lines = run(
+        [py, "-m", "pytest", "-q", "-p", "no:warnings", "tests/test_screenshots.py"]
     )
 
     render(
-        OUT / "01-flow-overview.png",
-        "API Webhook Bridge Flow",
-        "Synthetic source events become mapped operations and audit evidence.",
+        OUT / "01-system-flow.png",
+        "API Webhook Bridge System Flow",
+        (
+            "Validate input, apply approved mappings, control duplicates, "
+            "and return operating readback."
+        ),
         [
             {
-                "box": (52, 148, 410, 628),
+                "box": THREE_COLUMN_BOXES[0],
                 "title": "Sources",
-                "accent": BLUE,
                 "lines": [
                     "HubSpot-like contact",
                     "Shopify-like order",
                     "Stripe-like payment",
-                    "Custom webhook pattern",
-                    "Invalid event fixture",
+                    "constrained generic route",
+                    "invalid event scenario",
                 ],
             },
             {
-                "box": (462, 148, 820, 628),
-                "title": "Bridge",
-                "accent": YELLOW,
+                "box": THREE_COLUMN_BOXES[1],
+                "title": "Control",
                 "lines": [
-                    "FastAPI endpoint",
-                    "schema validation",
-                    "mapping JSON review",
-                    "idempotency key",
-                    "downstream handoff evidence",
+                    "stream and size-check body",
+                    "validate source contract",
+                    "apply explicit mapping",
+                    "evaluate idempotency",
+                    "prepare destination operations",
                 ],
             },
             {
-                "box": (872, 148, 1230, 628),
-                "title": "Evidence",
-                "accent": GREEN,
+                "box": THREE_COLUMN_BOXES[2],
+                "title": "Outcomes",
                 "lines": [
-                    "response JSON files",
-                    "audit event log",
-                    "dead-letter record",
-                    "handoff note",
-                    "quality gate proof",
+                    "mapped operation plan",
+                    "duplicate ignored",
+                    "dead-letter review",
+                    "audit and correlation IDs",
+                    "operator handoff note",
                 ],
             },
         ],
     )
+
     render(
-        OUT / "02-openapi-webhook-endpoints.png",
-        "Local API Surface",
-        "OpenAPI routes expose only fixture-safe bridge, audit, and review surfaces.",
+        OUT / "02-interface-surface.png",
+        "OpenAPI Interface Surface",
+        "Named routes keep contact, order, payment, mapping, and audit contracts explicit.",
         [
             {
-                "box": (52, 148, 604, 628),
-                "title": "Endpoints",
-                "accent": BLUE,
+                "box": TWO_COLUMN_BOXES[0],
+                "title": "HTTP routes",
+                "code": True,
                 "lines": [
-                    "GET /health",
-                    "GET /integrations",
-                    "GET /mappings",
+                    "GET  /health",
+                    "GET  /integrations",
+                    "GET  /mappings",
                     "POST /webhooks/hubspot-like",
                     "POST /webhooks/shopify-like",
                     "POST /webhooks/stripe-like",
-                    "GET /audit/events",
-                    "GET /audit/dead-letter",
+                    "GET  /audit/events",
+                    "GET  /audit/dead-letter",
                 ],
             },
             {
-                "box": (650, 148, 1230, 628),
-                "title": "Health contract",
+                "box": TWO_COLUMN_BOXES[1],
+                "title": "Service contract",
                 "accent": GREEN,
                 "code": True,
-                "lines": health,
+                "lines": [
+                    f"status={health.get('status')}",
+                    f"fixture_safe={health.get('fixture_safe')}",
+                    f"live_services_used={health.get('live_services_used')}",
+                    "request_limit_bytes=64000",
+                    "content_type=application/json",
+                    "response_shape=JSON object",
+                    "destination_execution=disabled",
+                ],
             },
         ],
     )
+
     render(
-        OUT / "03-contact-bridge-proof.png",
-        "Contact Bridge Proof",
-        "A HubSpot-like contact fixture maps to an Airtable-style upsert without live credentials.",
+        OUT / "03-core-processing.png",
+        "Mapped Contact Processing",
+        (
+            "A controlled contact event becomes one Airtable-style operation "
+            "through an explicit mapping."
+        ),
         [
             {
-                "box": (52, 148, 604, 628),
-                "title": "Fixture",
-                "accent": PINK,
+                "box": TWO_COLUMN_BOXES[0],
+                "title": "Source scenario",
                 "code": True,
                 "lines": [
-                    f"id={contact.get('id')}",
                     f"type={contact.get('type')}",
-                    "target=Airtable-style upsert",
-                    "required=email, firstname, lastname",
+                    f"contact_id={contact.get('contact_id')}",
+                    "required_fields=contact_id,email",
+                    "mapping=hubspot-contact-to-airtable",
+                    "destination=airtable-like",
                 ],
             },
             {
-                "box": (650, 148, 1230, 628),
-                "title": "Response excerpt",
+                "box": TWO_COLUMN_BOXES[1],
+                "title": "Operation readback",
                 "accent": GREEN,
                 "code": True,
-                "lines": hubspot,
+                "lines": contact_response,
             },
         ],
     )
+
     render(
-        OUT / "04-mapping-config.png",
-        "Reviewable Mapping Config",
-        "Field mapping stays explicit in JSON so a reviewer can approve schema changes first.",
+        OUT / "04-event-guardrails.png",
+        "Duplicate and Invalid Event Guardrails",
+        "Repeated payments and incomplete contacts stop without repeated destination operations.",
         [
             {
-                "box": (52, 148, 604, 628),
-                "title": "Mapping",
-                "accent": YELLOW,
+                "box": TWO_COLUMN_BOXES[0],
+                "title": "Duplicate payment",
+                "accent": RED,
                 "code": True,
-                "lines": mapping,
+                "lines": duplicate_response,
             },
             {
-                "box": (650, 148, 1230, 628),
-                "title": "Review contract",
-                "accent": BLUE,
+                "box": TWO_COLUMN_BOXES[1],
+                "title": "Invalid contact",
+                "accent": RED,
+                "code": True,
                 "lines": [
-                    "source field names are visible",
-                    "destination operation shape is visible",
-                    "required fields are listed",
-                    "handoff note is fixture-backed",
-                    "live credential work remains gated",
+                    f"type={invalid_contact.get('type')}",
+                    *dead_letter_response,
                 ],
             },
         ],
     )
+
     render(
-        OUT / "05-idempotency-audit.png",
-        "Idempotency And Audit Proof",
-        "Repeated Stripe-like payments are detected as duplicates and kept in audit evidence.",
+        OUT / "05-operating-readback.png",
+        "Order and Payment Readback",
+        (
+            "Accepted events return destination-shaped operations with stable audit "
+            "and correlation identifiers."
+        ),
         [
             {
-                "box": (52, 148, 604, 628),
-                "title": "First payment",
+                "box": TWO_COLUMN_BOXES[0],
+                "title": "Order processing",
                 "accent": GREEN,
                 "code": True,
-                "lines": [f"id={payment.get('id')}", *stripe[:8]],
+                "lines": order_response,
             },
             {
-                "box": (650, 148, 1230, 628),
-                "title": "Duplicate replay",
-                "accent": RED,
+                "box": TWO_COLUMN_BOXES[1],
+                "title": "Payment processing",
+                "accent": GREEN,
                 "code": True,
-                "lines": duplicate,
+                "lines": payment_response,
             },
         ],
     )
+
     render(
-        OUT / "06-dead-letter.png",
-        "Dead-Letter Proof",
-        "Invalid contact payloads route to review instead of silent delivery.",
+        OUT / "06-validation-scope.png",
+        "Validation and Scope",
+        (
+            "Local checks cover routes, mappings, idempotency, audit records, "
+            "saved responses, and image integrity."
+        ),
         [
             {
-                "box": (52, 148, 604, 628),
-                "title": "Invalid input",
-                "accent": RED,
-                "lines": [
-                    "contact.created fixture",
-                    "missing required field(s)",
-                    "no destination operation prepared",
-                    "manual review record created",
-                ],
-            },
-            {
-                "box": (650, 148, 1230, 628),
-                "title": "Response excerpt",
-                "accent": YELLOW,
-                "code": True,
-                "lines": dead_letter,
-            },
-        ],
-    )
-    render(
-        OUT / "07-quality-gates.png",
-        "Quality Gate Proof",
-        "Tests run against the current local bridge package before screenshots are accepted.",
-        [
-            {
-                "box": (52, 148, 604, 628),
-                "title": "Command",
-                "accent": YELLOW,
+                "box": TWO_COLUMN_BOXES[0],
+                "title": "Validation commands",
                 "code": True,
                 "lines": [
-                    "$ PYTHONPATH=src python -m pytest -q tests -k 'not screenshots'",
-                    "$ python -m ruff check .",
+                    "$ python -m pytest tests -q",
+                    "$ python -m ruff check src tests scripts",
                     "$ python -m mypy src",
+                    "$ examples/run-local-validation.sh",
                     "$ python scripts/capture_screenshots.py",
                 ],
             },
             {
-                "box": (650, 148, 1230, 628),
-                "title": "Pytest excerpt",
-                "accent": GREEN,
-                "code": True,
-                "lines": pytest_lines,
-            },
-        ],
-    )
-    render(
-        OUT / "08-debugger-handoff.png",
-        "Debugger Handoff Surface",
-        "Bridge proof covers the green path; Automation Debugger covers repair after failure.",
-        [
-            {
-                "box": (52, 148, 604, 628),
-                "title": "Bridge milestone",
+                "box": TWO_COLUMN_BOXES[1],
+                "title": "Current result",
                 "accent": GREEN,
                 "lines": [
-                    "valid event accepted",
-                    "mapping reviewed",
-                    "destination-shaped operations",
-                    "audit evidence returned",
-                    "dead-letter invalid payloads",
-                ],
-            },
-            {
-                "box": (650, 148, 1230, 628),
-                "title": "Repair milestone",
-                "accent": BLUE,
-                "lines": [
-                    "failed event exported",
-                    "root cause diagnosed",
-                    "safe replay decided",
-                    "fix report generated",
-                    "human review before live retry",
+                    *validation_summary(core_test_lines, image_test_lines),
+                    "source scenarios: synthetic",
+                    "destination calls: zero",
+                    "provider credentials: none",
+                    "customer records: none",
+                    "production storage: excluded",
                 ],
             },
         ],
     )
-    render(
-        OUT / "09-mock-job-01-bridge-proof.png",
-        "Mock Job 01 Bridge Proof",
-        "Shopify order and Stripe payment intake are verified before Airtable/Sheets output proof.",
-        [
-            {
-                "box": (52, 148, 604, 628),
-                "title": "Shopify order intake",
-                "accent": BLUE,
-                "code": True,
-                "lines": shopify,
-            },
-            {
-                "box": (650, 148, 1230, 628),
-                "title": "Stripe payment intake",
-                "accent": GREEN,
-                "code": True,
-                "lines": [*stripe[:7], "duplicate replay covered in 05-idempotency-audit.png"],
-            },
-        ],
-    )
+
+    print("six portfolio images rendered")
 
 
 if __name__ == "__main__":

@@ -21,7 +21,7 @@
       "text": "Synthetic Stripe payment succeeded {payment_intent} for {customer_email}: {currency} {amount}"
     }
   ],
-  "handoff_note_template": "Mapped payment.succeeded into audit record and Slack-style notification with idempotency proof.",
+  "handoff_note_template": "Mapped payment.succeeded into an audit record and Slack-style notification with a stable idempotency control.",
   "idempotency_fields": [
     "event_id",
     "payment_intent"

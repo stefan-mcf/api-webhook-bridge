@@ -1,200 +1,159 @@
 # API Webhook Bridge
 
-FastAPI service for validating webhook events, mapping them into destination-shaped operations, handling duplicates, and recording audit and dead-letter output.
+Validate webhook events, map approved fields into destination-shaped operations, control duplicate delivery, and retain an auditable operating record.
 
-[Read the case study](docs/case-study.md) · [Review the API](docs/api.md) · [Run the walkthrough](docs/sandbox-walkthrough.md)
+[Case study](docs/case-study.md) | [API reference](docs/api.md) | [Dependency contract](docs/automation-kit-backbone.md)
+
+## Overview
+
+API Webhook Bridge is a FastAPI integration service for contact, order, and payment events. It checks the request boundary, validates the event contract, applies an explicit JSON mapping, evaluates idempotency, and returns either planned operations or a structured review outcome.
+
+The included scenarios model HubSpot-like contacts, Shopify-like orders, Stripe-like payments, Airtable-style upserts, CRM notes, Slack-style alerts, and payment-audit records. All provider names describe local contract shapes; the repository makes no live provider calls.
 
 ## Capabilities
 
-- Accepts local webhook-style JSON payloads for contact, order, and payment flows.
-- Validates request shape before any mapping logic runs.
-- Maps approved source events into deterministic destination-shaped operations.
-- Records successful processing and duplicate handling in local audit output.
-- Captures invalid payloads in a local dead-letter log for review.
-- Exposes a small OpenAPI surface for repeatable local verification and screenshots.
-- Runs locally with controlled scenarios: no live provider calls, cloud deployment, or customer data.
+- Streams and limits webhook request bodies before JSON parsing.
+- Validates three approved event families through explicit source contracts.
+- Keeps source-to-destination field mappings in reviewable JSON.
+- Prepares one or more deterministic destination-shaped operations.
+- Detects duplicate deliveries through stable idempotency keys.
+- Records accepted, duplicate, and rejected outcomes in local audit stores.
+- Routes invalid or unsupported events to dead-letter review.
+- Exposes named and constrained generic webhook routes through OpenAPI.
 
-## Included local flows
+## Operating flow
 
-This repo uses short synthetic fixtures instead of live external-service exports. Each flow writes matching response evidence under `examples/api-responses/`.
-
-| Flow | Input | Destination shape | Result |
-|---|---|---|---|
-| Contact | `contact-created` | Airtable-style upsert | Validate and map locally. |
-| Order | `shopify-order-created` | Slack alert + CRM note | Prepare two mock ops. |
-| Payment | `stripe-payment-succeeded` | Audit record + Slack alert | Prove idempotency. |
-| Invalid contact | `contact-created-invalid` | Dead-letter review | Block bad payload. |
-
-All systems are synthetic and local. The project does not call HubSpot, Shopify, Stripe, Airtable, Slack, CRM, or a cloud service.
-
-## Quick start
-
-### Minimal local setup
-
-```bash
-uv venv --python 3.11 .venv
-source .venv/bin/activate
-uv pip install -e ../automation-kit
-uv pip install -e '.[dev]'
-export AUTOMATION_KIT_PATH=../automation-kit
-export PYTHONPATH="$AUTOMATION_KIT_PATH/src:src"
+```text
+Webhook request
+      |
+      v
+Size and JSON checks
+      |
+      v
+Source contract validation
+      |
+      v
+Field mapping and idempotency
+      |
+      +---------- duplicate ----------> audit record
+      |
+      +---------- invalid ------------> dead-letter review
+      |
+      v
+Destination-shaped operations
+      |
+      v
+Operating readback
 ```
 
-### Run the API locally
+No destination operation is executed by the local bridge. The response makes the mapping, operation count, idempotency key, correlation ID, and next action visible to an implementation team.
+
+## Interfaces
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/health` | Return local service status. |
+| `GET` | `/integrations` | List source, destination, and backbone scope. |
+| `GET` | `/mappings` | Return the three visible mapping contracts. |
+| `POST` | `/webhooks/hubspot-like` | Process a contact event. |
+| `POST` | `/webhooks/shopify-like` | Process an order event. |
+| `POST` | `/webhooks/stripe-like` | Process a payment event. |
+| `POST` | `/webhooks/{source}` | Process the same constrained source set. |
+| `GET` | `/audit/events` | Read accepted and duplicate outcomes. |
+| `GET` | `/audit/dead-letter` | Read rejected-event records. |
+
+Webhook bodies must be JSON objects and cannot exceed 64KB. Unknown sources return `404`; invalid JSON, oversized input, missing fields, duplicate events, and unsupported event types follow explicit response paths.
+
+## System views
+
+### System flow
+
+[![API Webhook Bridge system flow](docs/screenshots/01-system-flow.png)](docs/screenshots/01-system-flow.png)
+
+### Interface surface
+
+[![OpenAPI interface surface](docs/screenshots/02-interface-surface.png)](docs/screenshots/02-interface-surface.png)
+
+### Core processing
+
+[![Contact mapping and operation preparation](docs/screenshots/03-core-processing.png)](docs/screenshots/03-core-processing.png)
+
+### Guardrail and failure path
+
+[![Duplicate and invalid-event guardrails](docs/screenshots/04-event-guardrails.png)](docs/screenshots/04-event-guardrails.png)
+
+### Output and readback
+
+[![Order and payment operating readback](docs/screenshots/05-operating-readback.png)](docs/screenshots/05-operating-readback.png)
+
+### Validation and scope
+
+[![Validation results and operating boundary](docs/screenshots/06-validation-scope.png)](docs/screenshots/06-validation-scope.png)
+
+The images are generated from committed local scenarios. They contain no provider account screens, customer records, credentials, browser chrome, private identifiers, or absolute desktop paths.
+
+## Run locally
+
+Python 3.11 is the reference runtime. Automation Kit is pinned to commit `b4b1df2730bc928b8c9ee96f716b706b41856cf1` in package metadata and CI.
+
+```bash
+git clone https://github.com/stefan-mcf/automation-kit.git ../automation-kit
+git -C ../automation-kit checkout b4b1df2730bc928b8c9ee96f716b706b41856cf1
+
+uv venv --python 3.11 .venv
+source .venv/bin/activate
+uv pip install -e ".[dev]"
+
+export AUTOMATION_KIT_PATTERNS="$PWD/../automation-kit/patterns"
+```
+
+Start the local API:
 
 ```bash
 uvicorn api_webhook_bridge.api:app --host 127.0.0.1 --port 8011
+curl -fsS http://127.0.0.1:8011/health
 ```
 
-In another terminal:
+OpenAPI JSON is available at `http://127.0.0.1:8011/openapi.json`; local interactive docs are available at `http://127.0.0.1:8011/docs`.
+
+## Validation
 
 ```bash
-curl http://127.0.0.1:8011/health
+python -m pytest tests -q
+python -m ruff check src tests scripts
+python -m mypy src
+examples/run-local-validation.sh
+python scripts/capture_screenshots.py
 ```
 
-OpenAPI JSON is available at `http://127.0.0.1:8011/openapi.json` and docs at `http://127.0.0.1:8011/docs`.
+## Scope boundaries
 
-### Run the full walkthrough
+- Synthetic fixtures and local storage only.
+- No provider credentials, OAuth scopes, or customer records.
+- No live HubSpot, Shopify, Stripe, Airtable, Slack, CRM, or cloud calls.
+- Destination operations are prepared but not executed.
+- In-memory idempotency and local JSONL audit storage are not production infrastructure.
+- Production use requires durable storage, scoped adapters, retries, monitoring, deployment, and operator approval.
 
-```bash
-source .venv/bin/activate
-export AUTOMATION_KIT_PATH=../automation-kit
-export PYTHONPATH="$AUTOMATION_KIT_PATH/src:src"
-examples/run-sandbox-walkthrough.sh
+Every saved response declares:
+
+```text
+fixture_safe=true
+live_services_used=false
 ```
 
-If `python3` on macOS resolves to Python 3.10, the sibling `automation-kit` editable install will fail because it requires Python 3.11+. Use `uv venv --python 3.11 .venv` for a reproducible setup.
+## Project documentation
 
-## Local API surface
+| Document | Purpose |
+| --- | --- |
+| [Case study](docs/case-study.md) | Engineering decisions, representative flows, and production extension. |
+| [API reference](docs/api.md) | Routes, limits, and request contracts. |
+| [Local operation](docs/local-operation.md) | Repeatable service and response-validation commands. |
+| [Validation record](docs/validation.md) | Checked behaviour, saved responses, and boundaries. |
+| [Dependency contract](docs/automation-kit-backbone.md) | Exact Automation Kit revision and imported modules. |
+| [Production extension](docs/production-path.md) | Work required for live provider operation. |
+| [Image index](docs/screenshots/README.md) | Functional image sequence and generation command. |
 
-| Method | Path | Purpose |
-|---|---|---|
-| GET | `/health` | Fixture-safe health check. |
-| GET | `/integrations` | Lists supported source/destination scope and local integration contract. |
-| GET | `/mappings` | Lists visible mapping configs. |
-| POST | `/webhooks/hubspot-like` | Named contact intake route. |
-| POST | `/webhooks/shopify-like` | Named order intake route. |
-| POST | `/webhooks/stripe-like` | Named payment intake route. |
-| POST | `/webhooks/{source}` | Generic route for the same approved source set. Unknown sources return `404`. |
-| GET | `/audit/events` | Local success and duplicate-processing audit output. |
-| GET | `/audit/dead-letter` | Local dead-letter output for rejected payloads. |
+## License
 
-Request contract notes:
-
-- Webhook bodies must be valid JSON objects.
-- Payloads above the 64KB request limit are rejected.
-- Named routes are kept for buyer-legible OpenAPI screenshots and direct route testing.
-- The generic route accepts the same approved sources: `hubspot-like`, `shopify-like`, and `stripe-like`.
-
-## How it works
-
-1. Receive a webhook-style request through a named route or the generic source route.
-2. Stream and size-check the request body before parsing.
-3. Reject non-JSON or non-object payloads early.
-4. Validate the event against the bridge's approved fixture contract.
-5. Map source fields into destination-shaped operations.
-6. Record success, duplicate handling, or dead-letter output locally.
-7. Return fixture-safe response evidence for inspection under `examples/api-responses/` and `.local/` runtime audit files.
-
-## Adapt the bridge
-
-| Source | Target | Use case | Change |
-|---|---|---|---|
-| Stripe payment | Airtable + Slack | Ops alert | Payment fixture + mapping |
-| Shopify order | CRM + Slack | Order note | Order fixture + mapping |
-| HubSpot contact | Airtable/Sheets | Lead sync | Contact fixture + mapping |
-| Typeform lead | CRM/Slack | Lead routing | Lead fixture + schema |
-| Custom webhook | Database/API | Internal bridge | Fixture schema + adapter |
-
-These are adaptation paths, not live-provider claims. Live credentials, OAuth scopes, provider dashboards, and real webhook delivery logs remain separate gated work.
-
-## Operating boundary
-
-- Fixture-safe synthetic examples only.
-- Empty credential placeholders only.
-- `fixture_safe: true` and `live_services_used: false` are returned in verification responses.
-- Runtime audit files under `.local/` are ignored.
-- No live external-service calls, client data, cloud resources, public visibility changes, releases, or external sharing actions are part of the local verification package.
-- Public export, existing-repo visibility changes, private collaborator access, live external-service verification, and cloud deployment remain human-gated.
-
-## Verification package
-
-The repo keeps strong verification artifacts, but they support the runnable bridge surface rather than replace it.
-
-Core artifacts:
-
-- `examples/api-responses/health.json`
-- `examples/api-responses/integrations.json`
-- `examples/api-responses/mappings.json`
-- `examples/api-responses/hubspot-contact-response.json`
-- `examples/api-responses/shopify-order-response.json`
-- `examples/api-responses/stripe-payment-response.json`
-- `examples/api-responses/stripe-payment-duplicate-response.json`
-- `examples/api-responses/dead-letter-response.json`
-- `examples/api-responses/audit-events.json`
-- `examples/api-responses/dead-letter.json`
-- `docs/screenshots/01-flow-overview.png`
-- `docs/screenshots/02-openapi-webhook-endpoints.png`
-- `docs/screenshots/05-idempotency-audit.png`
-- `docs/screenshots/06-dead-letter.png`
-- `docs/screenshots/09-mock-job-01-bridge-proof.png`
-
-[![API Webhook Bridge flow](docs/screenshots/01-flow-overview.png)](docs/screenshots/01-flow-overview.png)
-
-[![Local API endpoints](docs/screenshots/02-openapi-webhook-endpoints.png)](docs/screenshots/02-openapi-webhook-endpoints.png)
-
-[![Contact bridge run](docs/screenshots/03-contact-bridge-proof.png)](docs/screenshots/03-contact-bridge-proof.png)
-
-[![Mapping configuration](docs/screenshots/04-mapping-config.png)](docs/screenshots/04-mapping-config.png)
-
-[![Idempotency audit](docs/screenshots/05-idempotency-audit.png)](docs/screenshots/05-idempotency-audit.png)
-
-[![Dead-letter handling](docs/screenshots/06-dead-letter.png)](docs/screenshots/06-dead-letter.png)
-
-[![Quality checks](docs/screenshots/07-quality-gates.png)](docs/screenshots/07-quality-gates.png)
-
-[![Debugger handoff](docs/screenshots/08-debugger-handoff.png)](docs/screenshots/08-debugger-handoff.png)
-
-[![Shopify and Stripe intake run](docs/screenshots/09-mock-job-01-bridge-proof.png)](docs/screenshots/09-mock-job-01-bridge-proof.png)
-
-The screenshots are generated from controlled local runs. They show no live account screens, credentials, browser tabs, private desktop context, or customer data.
-
-## Project docs
-
-### Operator docs
-
-| Document | Path |
-|---|---|
-| API notes | `docs/api.md` |
-| Sandbox walkthrough | `docs/sandbox-walkthrough.md` |
-| Mapping configs | `configs/mappings/` |
-| API request examples | `examples/api-requests/` |
-| API response examples | `examples/api-responses/` |
-
-### Evidence and supporting docs
-
-| Document | Path |
-|---|---|
-| Verification evidence | `docs/evidence.md` |
-| Case study | `docs/case-study.md` |
-| Screenshot guide | `docs/screenshots/README.md` |
-| Automation Kit backbone notes | `docs/automation-kit-backbone.md` |
-| First milestone notes | `docs/first-milestone.md` |
-| Production path notes | `docs/production-path.md` |
-| Public readiness checklist | `docs/public-readiness-checklist.md` |
-
-## Automation Kit relationship
-
-Automation Kit is the reusable local automation backbone this bridge is built around. This repo packages one webhook-ingress implementation surface with fixture-safe examples, mappings, and verification artifacts that can be adapted for adjacent integration jobs.
-
-Used backbone modules:
-
-- `auto_kit.pattern_runner` for pattern/workflow vocabulary
-- `auto_kit.mock_clients` for deterministic CRM and Slack-style mock destination preparation
-- `auto_kit.workflow_schema` for validated workflow contract language
-
-See `docs/automation-kit-backbone.md` and `docs/automation-kit-case-study-contract.md`.
-
-## First live-integration milestone
-
-Map one approved source event to the destination schema, run it against synthetic or approved sample data, return the validated output payload, audit log, retry/idempotency notes, and a handoff note. Live credential connection happens only after that verification slice is reviewed.
+MIT. See [LICENSE](LICENSE).

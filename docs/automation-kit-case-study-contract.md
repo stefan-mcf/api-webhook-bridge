@@ -5,7 +5,7 @@
 ## Contract
 
 - Automation Kit owns reusable pattern vocabulary and mock clients.
-- This repo owns API/webhook mappings, FastAPI routes, fixtures, and case-study evidence.
+- This repository owns API/webhook mappings, FastAPI routes, fixtures, and implementation assets.
 - All verification examples are fixture-safe and local.
 - The repo can be reviewed without claiming live external-service connectivity or hosted availability.
 
@@ -13,13 +13,13 @@
 
 1. HubSpot-like contact -> Airtable-style upsert.
 2. Shopify-like order -> Slack-style alert + CRM note.
-3. Stripe-like payment -> payment audit + Slack-style alert + idempotency proof.
+3. Stripe-like payment -> payment audit + Slack-style alert + stable idempotency control.
 
-## Evidence paths
+## Implementation paths
 
 - `README.md`
 - `docs/case-study.md`
-- `docs/evidence.md`
+- `docs/validation.md`
 - `docs/screenshots/`
 - `configs/mappings/`
 - `examples/api-responses/`

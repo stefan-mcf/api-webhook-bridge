@@ -20,7 +20,7 @@ _DEFAULT_STORE = InMemoryIdempotencyStore()
 
 
 def reset_default_state() -> None:
-    """Clear default in-memory idempotency state used by API tests/proofs."""
+    """Clear default in-memory idempotency state used by API tests."""
 
     _DEFAULT_STORE.clear()
 
@@ -97,7 +97,7 @@ def _validation_failed_response(
 
 
 def _backbone_enrich_operation(operation: dict[str, Any]) -> dict[str, Any]:
-    """Use Automation Kit mock clients for deterministic destination preparation proof."""
+    """Use Automation Kit mock clients for deterministic destination preparation."""
 
     system = str(operation.get("system", ""))
     enriched = dict(operation)

@@ -1,6 +1,6 @@
 # First Milestone Copy
 
-Map one approved source event to the destination schema, run it against synthetic or approved sample data, return the validated output payload, audit log, retry/idempotency notes, and a handoff note. Live credential connection happens only after that proof slice is reviewed.
+Map one approved source event to the destination schema, run it against synthetic or approved sample data, and return the validated output payload, audit log, retry/idempotency notes, and a handoff note. Live credential connection happens only after that implementation slice is reviewed.
 
 ## Deliverables
 
@@ -9,7 +9,7 @@ Map one approved source event to the destination schema, run it against syntheti
 - Deterministic response payload.
 - Validation summary.
 - Idempotency/retry note.
-- Audit/dead-letter evidence if the sample is malformed.
+- Audit/dead-letter record if the sample is malformed.
 - Handoff note explaining how to replay the slice.
 
 ## Boundary

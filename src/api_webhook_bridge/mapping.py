@@ -1,4 +1,4 @@
-"""Visible source-to-destination mapping contract for fixture-safe proof flows."""
+"""Visible source-to-destination mapping contract for fixture-safe flows."""
 
 from __future__ import annotations
 

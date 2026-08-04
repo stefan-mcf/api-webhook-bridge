@@ -1,6 +1,6 @@
-# Production Path After Local Proof
+# Production Extension
 
-This repo proves the local integration pattern. A real deployment would be separately scoped.
+This repository implements the local integration pattern. A real deployment would be separately scoped.
 
 ## Steps after approval
 
@@ -13,6 +13,6 @@ This repo proves the local integration pattern. A real deployment would be separ
 7. Prepare rollback and disable switch.
 8. Run the first live event only after client review.
 
-## Non-claim
+## Current boundary
 
-The local proof does not claim live Shopify, Stripe, Airtable, HubSpot, Slack, cloud deployment, or production operation.
+The current implementation does not include live Shopify, Stripe, Airtable, HubSpot, Slack, cloud deployment, or production operation.
