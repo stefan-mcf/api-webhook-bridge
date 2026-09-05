@@ -6,6 +6,8 @@ Validate webhook events, map approved fields into destination-shaped operations,
 
 ## Overview
 
+**Role:** integration design, FastAPI implementation, field mapping, duplicate controls and test coverage. **Status:** an SM Systems reference implementation tested with local provider-shaped contracts.
+
 API Webhook Bridge is a FastAPI integration service for contact, order, and payment events. It checks the request boundary, validates the event contract, applies an explicit JSON mapping, evaluates idempotency, and returns either planned operations or a structured review outcome.
 
 The included scenarios model HubSpot-like contacts, Shopify-like orders, Stripe-like payments, Airtable-style upserts, CRM notes, Slack-style alerts, and payment-audit records. All provider names describe local contract shapes; the repository makes no live provider calls.
