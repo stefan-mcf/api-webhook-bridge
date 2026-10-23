@@ -29,9 +29,11 @@ def test_images_are_readable_validation_panels() -> None:
             assert max(stat.stddev) > 20, f"{name} has low visual variance and may be blank"
 
 
-def test_readme_references_images_in_functional_order() -> None:
+def test_readme_links_to_gallery_with_images_in_functional_order() -> None:
     readme = Path("README.md").read_text()
-    offsets = [readme.index(f"docs/screenshots/{name}") for name in EXPECTED]
+    assert "docs/screenshots/README.md" in readme
+    gallery = (SCREENSHOT_DIR / "README.md").read_text()
+    offsets = [gallery.index(f"]({name})") for name in EXPECTED]
     assert offsets == sorted(offsets)
 
 
